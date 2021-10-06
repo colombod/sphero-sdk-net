@@ -14,7 +14,7 @@ namespace shpero.Rvr.Responses.SystemInfoDevice
                 throw new ArgumentNullException(nameof(message));
             }
 
-            Name = message.Data.ToStringFromOptionallyNullTerminated();
+            Name = message.Data.ToStringFromNullTerminated(true);
         }
 
         public string Name { get; }
