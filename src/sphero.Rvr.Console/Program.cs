@@ -22,19 +22,19 @@ namespace sphero.Rvr.Console
         {
             await io.SetAllLedsAsync(LedColor.Colors[LedColorNames.Blue], CancellationToken.None);
 
-            await Task.Delay(2000);
+            await Task.Delay(1000);
 
             await io.SetAllLedsAsync(LedColor.Colors[LedColorNames.Pink], CancellationToken.None);
 
-            await Task.Delay(2000);
+            await Task.Delay(1000);
 
             await io.SetAllLedsAsync(LedColor.Colors[LedColorNames.Green], CancellationToken.None);
 
-            await Task.Delay(2000);
+            await Task.Delay(1000);
 
             await io.SetAllLedsAsync(LedColor.Colors[LedColorNames.White], CancellationToken.None);
 
-            await Task.Delay(2000);
+            await Task.Delay(1000);
         }
 
         private static async Task TestDevice(SystemInfoDevice systemInfo)

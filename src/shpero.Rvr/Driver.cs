@@ -45,12 +45,12 @@ namespace shpero.Rvr
         {
             var buffer = ArrayPool<byte>.Shared.Rent(_serialPort.BytesToRead);
 
-            _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
-            _pipe.Writer.Write(buffer);
+            var read = _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
+            //Console.WriteLine($"[{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
+            _pipe.Writer.Write(buffer[..read]);
             _pipe.Writer.FlushAsync().GetAwaiter().OnCompleted(() =>
             {
                 ArrayPool<byte>.Shared.Return(buffer);
-         
             });
         }
 
@@ -67,8 +67,6 @@ namespace shpero.Rvr
                         var end = readerResult.Buffer.PositionOf(Message.EndOfPacket);
                         if (end is not null)
                         {
-                            
-
                             var endIncluded = new SequencePosition(end.Value.GetObject(), end.Value.GetInteger() + 1);
                             var rawBytes = readerResult.Buffer.Slice(start.Value, endIncluded).ToArray();
 

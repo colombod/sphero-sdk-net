@@ -24,7 +24,6 @@ namespace shpero.Rvr
             [LedGroup.BrakeLightLeft] = LedBitMask.BrakeLightLeft,
             [LedGroup.BrakeLightRight] = LedBitMask.BrakeLightRight,
             [LedGroup.UndercarriageWhite] = LedBitMask.UndercarriageWhite
-
         };
 
         public IoDevice(Driver driver)

@@ -26,7 +26,7 @@ namespace shpero.Rvr
                 (m.Header.Sequence == request.Header.Sequence) &&
                 (m.Header.DeviceId == request.Header.DeviceId) &&
                 (m.Header.CommandId == request.Header.CommandId))
-                .Timeout(TimeSpan.FromSeconds(2)).Subscribe(response =>
+                .Timeout(TimeSpan.FromSeconds(10)).Subscribe(response =>
             {
                 cs.TrySetResult(response);
             }, exception =>

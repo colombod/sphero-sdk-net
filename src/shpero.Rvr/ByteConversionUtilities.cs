@@ -74,5 +74,16 @@ namespace shpero.Rvr
 
             return BitConverter.ToInt64(rawBytes.Reverse().ToArray(), 0);
         }
+
+        public static string ToStringFromOptionallyNullTerminated(this byte[] rawBytes)
+        {
+            var nullPos =  Array.IndexOf(rawBytes, (byte)0x00);
+            if (nullPos >= 0)
+            {
+                return BitConverter.ToString(rawBytes, 0, nullPos);
+            }
+
+            return BitConverter.ToString(rawBytes);
+        }
     }
 }
