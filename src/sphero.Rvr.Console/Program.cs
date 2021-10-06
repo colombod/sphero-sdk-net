@@ -8,7 +8,8 @@ namespace sphero.Rvr.Console
     {
         static async Task Main(string[] args)
         {
-            using var driver = new Driver("COM5");
+            var port = args.Length > 0 ? args[0] : "COM5";
+            using var driver = new Driver(port);
 
             await TestDevice(new IoDevice(driver));
 
