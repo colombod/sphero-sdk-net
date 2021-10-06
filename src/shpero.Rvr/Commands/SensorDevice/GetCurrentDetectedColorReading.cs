@@ -3,12 +3,14 @@
 namespace shpero.Rvr.Commands.SensorDevice
 {
     [Command(CommandId, DeviceId)]
-    public class GetRgbcSensorValues : Command
+    public class GetCurrentDetectedColorReading : Command
     {
-        public const byte CommandId = 0x23;
+
+        public const byte CommandId = 0x37;
 
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Sensor;
 
+       
         public override Message ToMessage()
         {
             var header = new Header(
@@ -17,7 +19,7 @@ namespace shpero.Rvr.Commands.SensorDevice
                 deviceId: DeviceId,
                 sourceId: ApiTargetsAndSources.ServiceSource,
                 sequence: GetSequenceNumber(),
-                flags: Flags.DefaultRequestWithResponseFlags);
+                flags: Flags.DefaultRequestWithNoResponseFlags);
             return new Message(header);
         }
     }

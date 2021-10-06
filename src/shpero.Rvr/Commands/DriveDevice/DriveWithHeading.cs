@@ -6,7 +6,7 @@ namespace shpero.Rvr.Commands.DriveDevice
     [Command(CommandId, DeviceId)]
     public class DriveWithHeading : Command
     {
-        private readonly byte _speed;
+        private readonly byte _motorSpeed;
         private readonly Angle _heading;
         private readonly DriveFlags _flags;
 
@@ -14,9 +14,9 @@ namespace shpero.Rvr.Commands.DriveDevice
 
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Drive;
 
-        public DriveWithHeading(byte speed, UnitsNet.Angle heading, DriveFlags flags)
+        public DriveWithHeading(byte motorSpeed, UnitsNet.Angle heading, DriveFlags flags)
         {
-            _speed = speed;
+            _motorSpeed = motorSpeed;
             _heading = heading;
             _flags = flags;
         }
@@ -31,7 +31,7 @@ namespace shpero.Rvr.Commands.DriveDevice
                 sequence: GetSequenceNumber(),
                 flags: Flags.DefaultRequestWithNoResponseFlags);
 
-            var rawData = new byte[]{_speed,0,0,(byte)_flags};
+            var rawData = new byte[]{_motorSpeed,0,0,(byte)_flags};
             
             var value = (ushort)_heading.Degrees;
             for (var i = 2; i >= 1; i--)

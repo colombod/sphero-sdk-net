@@ -37,7 +37,7 @@ namespace shpero.Rvr
             return _driver.SendAsync(setAllLeds.ToMessage(), cancellationToken);
         }
 
-        public Task SetAllLedsAsync(LedColor color, CancellationToken cancellationToken)
+        public Task SetAllLedsAsync(Color color, CancellationToken cancellationToken)
         {
             var brightnessValues = new byte[3 * 10];
             for (int i = 0; i < 10; i++)
@@ -53,7 +53,7 @@ namespace shpero.Rvr
 
         public Task SetAllLedsOffAsync( CancellationToken cancellationToken)
         {
-            return SetAllLedsAsync(LedColor.Colors[LedColorNames.Off], cancellationToken);
+            return SetAllLedsAsync(Color.Colors[ColorNames.Off], cancellationToken);
         }
 
         public async Task<ActiveColorPalette> GetActiveColorPaletteAsync(CancellationToken cancellationToken)

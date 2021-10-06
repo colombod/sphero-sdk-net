@@ -3,21 +3,28 @@
 namespace shpero.Rvr.Commands.SensorDevice
 {
     [Command(CommandId, DeviceId)]
-    public class GetRgbcSensorValues : Command
+    public class StopStreamingService : Command
     {
-        public const byte CommandId = 0x23;
+        private readonly byte _targetId;
+
+        public const byte CommandId = 0x3B;
 
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Sensor;
+
+        public StopStreamingService(byte targetId)
+        {
+            _targetId = targetId;
+        }
 
         public override Message ToMessage()
         {
             var header = new Header(
                 commandId: CommandId,
-                targetId: 0x01,
+                targetId: _targetId,
                 deviceId: DeviceId,
                 sourceId: ApiTargetsAndSources.ServiceSource,
                 sequence: GetSequenceNumber(),
-                flags: Flags.DefaultRequestWithResponseFlags);
+                flags: Flags.DefaultRequestWithNoResponseFlags);
             return new Message(header);
         }
     }

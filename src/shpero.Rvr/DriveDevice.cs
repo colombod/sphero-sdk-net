@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using shpero.Rvr.Commands.DriveDevice;
-using shpero.Rvr.Responses.DriveDevice;
 using GetMotorFaultState = shpero.Rvr.Responses.DriveDevice.GetMotorFaultState;
 
 namespace shpero.Rvr
@@ -30,10 +29,10 @@ namespace shpero.Rvr
             return _driver.SendAsync(resetYaw.ToMessage(), cancellationToken);
         }
 
-        public Task DriveWithHeadingAsync(byte speed, UnitsNet.Angle heading, DriveFlags flags,
+        public Task DriveWithHeadingAsync(byte motorSpeed, UnitsNet.Angle heading, DriveFlags flags,
             CancellationToken cancellationToken)
         {
-            var driveWithHeading = new DriveWithHeading(speed, heading, flags);
+            var driveWithHeading = new DriveWithHeading(motorSpeed, heading, flags);
             return _driver.SendAsync(driveWithHeading.ToMessage(), cancellationToken);
         }
 
