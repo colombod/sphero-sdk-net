@@ -1,5 +1,4 @@
 ﻿using System;
-using shpero.Rvr.Commands.DriveDevice;
 using shpero.Rvr.Protocol;
 
 namespace shpero.Rvr.Responses.DriveDevice

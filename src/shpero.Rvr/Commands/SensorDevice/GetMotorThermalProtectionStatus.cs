@@ -3,9 +3,9 @@
 namespace shpero.Rvr.Commands.SensorDevice
 {
     [Command(CommandId, DeviceId)]
-    public class GetRgbcSensorValues : Command
+    public class GetMotorThermalProtectionStatus : Command
     {
-        public const byte CommandId = 0x23;
+        public const byte CommandId = 0x4B;
 
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Sensor;
 
@@ -13,7 +13,7 @@ namespace shpero.Rvr.Commands.SensorDevice
         {
             var header = new Header(
                 commandId: CommandId,
-                targetId: 0x01,
+                targetId: 0x02,
                 deviceId: DeviceId,
                 sourceId: ApiTargetsAndSources.ServiceSource,
                 sequence: GetSequenceNumber(),

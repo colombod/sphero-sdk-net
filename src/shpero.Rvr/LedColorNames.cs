@@ -1,6 +1,6 @@
 ﻿namespace shpero.Rvr
 {
-    public enum LedColorNames
+    public enum ColorNames
     {
         Red,
         Green,
