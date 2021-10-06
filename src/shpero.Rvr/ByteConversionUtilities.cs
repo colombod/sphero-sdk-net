@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace shpero.Rvr
 {
@@ -75,15 +76,18 @@ namespace shpero.Rvr
             return BitConverter.ToInt64(rawBytes.Reverse().ToArray(), 0);
         }
 
-        public static string ToStringFromOptionallyNullTerminated(this byte[] rawBytes)
+        public static string ToStringFromNullTerminated(this byte[] rawBytes, bool terminatorOptional = false)
         {
-            var nullPos =  Array.IndexOf(rawBytes, (byte)0x00);
+            var nullPos = Array.IndexOf(rawBytes, (byte)0x00);
             if (nullPos >= 0)
             {
-                return BitConverter.ToString(rawBytes, 0, nullPos);
+                return Encoding.ASCII.GetString(rawBytes, 0, nullPos);
             }
-
-            return BitConverter.ToString(rawBytes);
+            if (!terminatorOptional)
+            {
+                throw new InvalidOperationException("no terminating null found in string");
+            }
+            return Encoding.ASCII.GetString(rawBytes);
         }
     }
 }

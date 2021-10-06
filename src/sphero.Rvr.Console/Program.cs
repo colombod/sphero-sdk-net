@@ -1,8 +1,6 @@
-﻿using System.Data;
-using System.Linq;
+﻿using shpero.Rvr;
 using System.Threading;
 using System.Threading.Tasks;
-using shpero.Rvr;
 
 namespace sphero.Rvr.Console
 {

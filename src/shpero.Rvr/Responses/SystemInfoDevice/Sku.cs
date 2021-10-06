@@ -13,9 +13,9 @@ namespace shpero.Rvr.Responses.SystemInfoDevice
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            Value = BitConverter.ToString(message.Data);
+            Value = message.Data.ToStringFromNullTerminated();
         }
 
-        public string Value { get;  }
+        public string Value { get; }
     }
 }
