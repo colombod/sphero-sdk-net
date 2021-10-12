@@ -1,4 +1,5 @@
 ﻿using shpero.Rvr;
+
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,9 +12,15 @@ namespace sphero.Rvr.Console
             var port = args.Length > 0 ? args[0] : "COM5";
             using var driver = new Driver(port);
 
-            await TestDevice(new IoDevice(driver));
+            var power = new PowerDevice(driver);
+
+            await power.WakeAsync(CancellationToken.None);
 
             await TestDevice(new SystemInfoDevice(driver));
+
+            await TestDevice(new IoDevice(driver));
+
+            await power.SleepAsync(CancellationToken.None);
 
         }
 
@@ -55,22 +62,22 @@ namespace sphero.Rvr.Console
             System.Console.WriteLine(boardRevision.Revision);
 
             var macAddress = await systemInfo.GetMacAddressAsync(CancellationToken.None);
-            
+
             System.Console.WriteLine(macAddress.Address);
 
             var statsId = await systemInfo.GetStatsIdAsync(CancellationToken.None);
 
             System.Console.WriteLine(statsId.Id);
 
-            var proc1Name = await systemInfo.GetProcessorNameAsync(1,CancellationToken.None);
+            var proc1Name = await systemInfo.GetProcessorNameAsync(1, CancellationToken.None);
 
             System.Console.WriteLine(proc1Name.Name);
 
-            var proc2Name = await systemInfo.GetProcessorNameAsync(2,CancellationToken.None);
+            var proc2Name = await systemInfo.GetProcessorNameAsync(2, CancellationToken.None);
 
             System.Console.WriteLine(proc2Name.Name);
 
-            var sku = await systemInfo.GetSkuAsync( CancellationToken.None);
+            var sku = await systemInfo.GetSkuAsync(CancellationToken.None);
 
             System.Console.WriteLine(sku.Value);
 
