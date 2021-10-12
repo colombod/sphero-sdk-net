@@ -1,7 +1,7 @@
-﻿using System;
+﻿using shpero.Rvr.Commands.DriveDevice;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using shpero.Rvr.Commands.DriveDevice;
 using GetMotorFaultState = shpero.Rvr.Responses.DriveDevice.GetMotorFaultState;
 
 namespace shpero.Rvr
@@ -19,7 +19,7 @@ namespace shpero.Rvr
 
         public Task SetRawMotorAsync(RawMotorMode leftRawMotor, byte leftMotorSpeed, RawMotorMode rightRawMotor, byte rightMotorSpeed, CancellationToken cancellationToken)
         {
-            var setRawMotor = new SetRawMotor(leftRawMotor,leftMotorSpeed, rightRawMotor, rightMotorSpeed);
+            var setRawMotor = new SetRawMotor(leftRawMotor, leftMotorSpeed, rightRawMotor, rightMotorSpeed);
             return _driver.SendAsync(setRawMotor.ToMessage(), cancellationToken);
         }
 

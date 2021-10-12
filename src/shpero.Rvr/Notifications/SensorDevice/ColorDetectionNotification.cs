@@ -1,9 +1,9 @@
-﻿using System;
-using shpero.Rvr.Protocol;
+﻿using shpero.Rvr.Protocol;
+using System;
 
 namespace shpero.Rvr.Notifications.SensorDevice
 {
-    public class ColorDetectionNotification
+    public class ColorDetectionNotification : Event
     {
         public ColorDetectionNotification(Message message)
         {
@@ -20,7 +20,7 @@ namespace shpero.Rvr.Notifications.SensorDevice
 
         public byte ColorClassificationId { get; }
 
-        public float Confidence { get;  }
+        public float Confidence { get; }
 
         public Color Color { get; }
     }
