@@ -19,14 +19,34 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Notifications\PowerDevice\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="Notifications\Notifications.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Notifications.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Notifications\Notifications.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Notifications.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Notifications\Notifications.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Notifications.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
