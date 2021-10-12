@@ -1,0 +1,49 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+var notifications = new (byte SourceId, byte DeviceId, byte CommandId, string ClassName )[] {
+    new (2, 0x16, 0x26, "MotorStallNotification"),
+    new (2, 0x16, 0x28, "MotorFaultNotification"),
+    new (2, 0x18, 0x10, "GyroMaxNotification"),
+    new (2, 0x18, 0x2C, "RobotToRobotInfraredMessageReceivedNotification"),
+    new (1, 0x18, 0x36, "ColorDetectionNotification"),
+    new (1, 0x18, 0x3D, "StreamingServiceDataNotification"),
+    new (2, 0x18, 0x3D, "StreamingServiceDataNotification"),
+    new (2, 0x18, 0x4D, "MotorThermalProtectionStatusNotification"),
+    new (1, 0x13, 0x1C, "BatteryVoltageStateChangeNotification"),
+};
+
+var namespaceByDeviceId = new Dictionary<byte, string>{
+    [0x1A] = "sphero.Rvr.Notifications.IoDevice",
+    [0x10] = "sphero.Rvr.Notifications.ShellDevice",
+    [0x11] = "sphero.Rvr.Notifications.SystemInfoDevice",
+    [0x13] = "sphero.Rvr.Notifications.PowerDevice",
+    [0x16] = "sphero.Rvr.Notifications.DriveDevice",
+    [0x18] = "sphero.Rvr.Notifications.SensorDevice",
+    [0x19] = "sphero.Rvr.Notifications.ConnectionDevice"
+};
+#>
+using sphero.Rvr.Protocol;
+using System;
+
+namespace sphero.Rvr.Notifications{
+    internal static class NotificationExtensions {
+        public static Event ToNotification(this Message message){
+            var key = (message.Header.SourceId,
+                       (byte)message.Header.DeviceId,
+                       message.Header.CommandId);
+            switch (key){
+                <# foreach(var line in notifications){ #>
+                case (<#= line.SourceId #>, <#= line.DeviceId #>, <#= line.CommandId#>): 
+                    return new <#= namespaceByDeviceId[line.DeviceId] #>.<#= line.ClassName #>(message);
+                <#}#>
+                default:
+                    throw new ArgumentException($"Could not process message {key}", nameof(message));
+            }
+        }
+    }
+}

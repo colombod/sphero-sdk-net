@@ -1,4 +1,4 @@
-﻿using shpero.Rvr;
+﻿using sphero.Rvr;
 
 using System.Threading;
 using System.Threading.Tasks;

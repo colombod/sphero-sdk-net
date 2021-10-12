@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\shpero.Rvr\shpero.Rvr.csproj" />
+    <ProjectReference Include="..\sphero.Rvr\sphero.Rvr.csproj" />
   </ItemGroup>
 
 </Project>

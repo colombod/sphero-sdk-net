@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using shpero.Rvr;
-using shpero.Rvr.Protocol;
+using sphero.Rvr;
+using sphero.Rvr.Protocol;
 
 using Xunit;
 
@@ -11,10 +11,10 @@ namespace sphero.Rvr.Tests
         [Fact]
         public void message_with_no_data()
         {
-            var header = new Header(0, 1, 1, DeviceIdentifier.SystemInfo, 0, Flags.RequestsResponse| Flags.ResetInactivityTimeout|Flags.PacketHasTargetId| Flags.PacketHasSourceId);
+            var header = new Header(0, 1, 1, DeviceIdentifier.SystemInfo, 0, Flags.RequestsResponse | Flags.ResetInactivityTimeout | Flags.PacketHasTargetId | Flags.PacketHasSourceId);
             var message = new Message(header);
             var raw = message.ToRawBytes();
-            
+
             var expectedBytes = new byte[] {
                 0x8D, //SOP
                 0b_11_1010, // FLAGS: RequestResponse, IsActivity, HasTargetID, HasSourceID
