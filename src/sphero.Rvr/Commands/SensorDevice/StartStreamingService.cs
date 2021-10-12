@@ -22,14 +22,8 @@ namespace sphero.Rvr.Commands.SensorDevice
         public override Message ToMessage()
         {
             var value = (ushort)(_interval.TotalMilliseconds % ushort.MaxValue);
-            var rawData = new byte[2];
-            for (var i = 1; i >= 0; i--)
-            {
-                var byteValue = value & 0xFF;
-                rawData[i] = (byte)byteValue;
-                value = (ushort)((value - byteValue) / 256);
-            }
-
+            var rawData = new[] { (byte)((value >> 8) & 0xFF), (byte)(value & 0xFF) };
+           
             var header = new Header(
                 commandId: CommandId,
                 targetId: _targetId,
