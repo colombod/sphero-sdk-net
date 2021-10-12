@@ -1,4 +1,5 @@
 ﻿using sphero.Rvr.Protocol;
+
 using UnitsNet;
 
 namespace sphero.Rvr.Commands.DriveDevice
@@ -31,15 +32,10 @@ namespace sphero.Rvr.Commands.DriveDevice
                 sequence: GetSequenceNumber(),
                 flags: Flags.DefaultRequestWithNoResponseFlags);
 
-            var rawData = new byte[] { _motorSpeed, 0, 0, (byte)_flags };
+
 
             var value = (ushort)_heading.Degrees;
-            for (var i = 2; i >= 1; i--)
-            {
-                var byteValue = value & 0xFF;
-                rawData[i] = (byte)byteValue;
-                value = (ushort)((value - byteValue) / 256);
-            }
+            var rawData = new[] { _motorSpeed, (byte)((value >> 8) & 0xFF), (byte)(value & 0xFF), (byte)_flags };
 
             return new Message(header, rawData);
         }

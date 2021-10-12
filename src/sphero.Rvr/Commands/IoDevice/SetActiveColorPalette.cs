@@ -20,8 +20,6 @@ namespace sphero.Rvr.Commands.IoDevice
             }
         }
 
-
-
         public override Message ToMessage()
         {
             var header = new Header(
