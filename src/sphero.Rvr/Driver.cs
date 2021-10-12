@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using sphero.Rvr.Notifications.PowerDevice;
 using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr
@@ -116,6 +117,11 @@ namespace sphero.Rvr
         }
 
         public IDisposable Subscribe(IObserver<Message> observer) => _messageChannel.Subscribe(observer);
+
+        public IDisposable SubscribeToNotification(Action<BatteryVoltageStateChangeNotification> onNext)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

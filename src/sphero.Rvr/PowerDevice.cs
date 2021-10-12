@@ -2,17 +2,20 @@
 using System.Threading;
 using System.Threading.Tasks;
 using sphero.Rvr.Commands.PowerDevice;
+using sphero.Rvr.Notifications.PowerDevice;
 using sphero.Rvr.Responses.PowerDevice;
 
 namespace sphero.Rvr
 {
-    public class PowerDevice
+    public class PowerDevice : IDisposable
     {
         private readonly Driver _driver;
+        private readonly NotificationManager _notificationManager;
 
         public PowerDevice(Driver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
+            _notificationManager = new NotificationManager(_driver);
         }
 
         public Task SleepAsync(CancellationToken cancellationToken)
@@ -60,6 +63,22 @@ namespace sphero.Rvr
             var getCurrentSenseAmplifierCurrent = new GetCurrentSenseAmplifierCurrent(amplifierId);
             var response = await _driver.SendRequestAsync(getCurrentSenseAmplifierCurrent.ToMessage(), cancellationToken);
             return new CurrentSenseAmplifierCurrent(response);
+        }
+
+        public Task EnableBatteryVoltageStateChangeNotificationsAsync(bool enable, CancellationToken cancellationToken)
+        {
+            var enableBatteryVoltageStateChangeNotifications = new EnableBatteryVoltageStateChangeNotifications(enable);
+            return _driver.SendAsync(enableBatteryVoltageStateChangeNotifications.ToMessage(), cancellationToken);
+        }
+
+        public IDisposable Subscribe(Action<BatteryVoltageStateChangeNotification> onNext)
+        {
+            return _notificationManager.Subscribe(onNext);
+        }
+
+        public void Dispose()
+        {
+            _notificationManager.Dispose();
         }
     }
 }
