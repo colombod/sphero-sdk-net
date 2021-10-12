@@ -6,15 +6,15 @@ namespace shpero.Rvr
     {
         public static IReadOnlyDictionary<ColorNames, Color> Colors = new Dictionary<ColorNames, Color>
         {
-            [ColorNames.Red] = new Color(0xFF, 0x00, 0x00),
-            [ColorNames.Green] = new Color(0x00, 0xFF, 0x00),
-            [ColorNames.Blue] = new Color(0x00, 0x00, 0xFF),
-            [ColorNames.Off] = new Color(0x00, 0x00, 0x00),
-            [ColorNames.White] = new Color(0xFF, 0xFF, 0xFF),
-            [ColorNames.Yellow] = new Color(0xFF, 0x90, 0x00),
-            [ColorNames.Purple] = new Color(0xFF, 0x00, 0xFF),
-            [ColorNames.Orange] = new Color(0xFF, 0x20, 0x00),
-            [ColorNames.Pink] = new Color(0xFF, 0x66, 0xB2)
+            [ColorNames.Red] = new(0xFF, 0x00, 0x00),
+            [ColorNames.Green] = new(0x00, 0xFF, 0x00),
+            [ColorNames.Blue] = new(0x00, 0x00, 0xFF),
+            [ColorNames.Off] = new(0x00, 0x00, 0x00),
+            [ColorNames.White] = new(0xFF, 0xFF, 0xFF),
+            [ColorNames.Yellow] = new(0xFF, 0x90, 0x00),
+            [ColorNames.Purple] = new(0xFF, 0x00, 0xFF),
+            [ColorNames.Orange] = new(0xFF, 0x20, 0x00),
+            [ColorNames.Pink] = new(0xFF, 0x66, 0xB2)
         };
 
         public byte Red { get; }

@@ -19,6 +19,10 @@ namespace sphero.Rvr.Console
 
         private static async Task TestDevice(IoDevice io)
         {
+            await io.SetAllLedsAsync(Color.Colors[ColorNames.Off], CancellationToken.None);
+
+            await Task.Delay(1000);
+
             await io.SetAllLedsAsync(Color.Colors[ColorNames.Blue], CancellationToken.None);
 
             await Task.Delay(1000);
