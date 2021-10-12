@@ -13,12 +13,23 @@ namespace sphero.Rvr.Console
             using var driver = new Driver(port);
 
             var power = new PowerDevice(driver);
+            
+            power.Subscribe(notification =>
+            {
+                System.Console.WriteLine($" Battery voltage state : {notification.State}");
+            });
+
+            await power.EnableBatteryVoltageStateChangeNotificationsAsync(true, CancellationToken.None);
 
             await power.WakeAsync(CancellationToken.None);
 
             await TestDevice(new SystemInfoDevice(driver));
 
             await TestDevice(new IoDevice(driver));
+
+           
+
+            System.Console.ReadLine();
 
             await power.SleepAsync(CancellationToken.None);
 

@@ -29,9 +29,19 @@ var namespaceByDeviceId = new Dictionary<byte, string>{
 #>
 using sphero.Rvr.Protocol;
 using System;
+using System.Collections.Generic;
 
 namespace sphero.Rvr.Notifications{
     internal static class NotificationExtensions {
+        private static Dictionary<Type, (byte SourceId, byte DeviceId, byte CommandId)> _typeToKey = new(){
+        <# foreach(var line in notifications){ #>
+                    [typeof(<#= namespaceByDeviceId[line.DeviceId] #>.<#= line.ClassName #>)] = (<#= line.SourceId #>, <#= line.DeviceId #>, <#= line.CommandId#>),
+        <#}#>
+        };
+        public static bool TryGetKey(Type messageType, out (byte SourceId, byte DeviceId, byte CommandId) key ){
+            return _typeToKey.TryGetValue(messageType, out key);
+        }
+
         public static Event ToNotification(this Message message){
             var key = (message.Header.SourceId,
                        (byte)message.Header.DeviceId,
