@@ -7,7 +7,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Notifications.PowerDevice;
 using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr
@@ -48,7 +47,7 @@ namespace sphero.Rvr
             var buffer = ArrayPool<byte>.Shared.Rent(_serialPort.BytesToRead);
 
             var read = _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
-            Console.WriteLine($"Received [{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
+            //Console.WriteLine($"Received [{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
             _pipe.Writer.Write(buffer[..read]);
             _pipe.Writer.FlushAsync().GetAwaiter().OnCompleted(() =>
             {
@@ -113,17 +112,14 @@ namespace sphero.Rvr
             }
 
             var rawBytes = message.ToRawBytes();
-            Console.WriteLine($"Sending [{string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
+            //Console.WriteLine($"Sending [{string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
             _serialPort.Write(rawBytes, 0, rawBytes.Length);
             return Task.CompletedTask;
         }
 
         public IDisposable Subscribe(IObserver<Message> observer) => _messageChannel.Subscribe(observer);
 
-        public IDisposable SubscribeToNotification(Action<BatteryVoltageStateChangeNotification> onNext)
-        {
-            throw new NotImplementedException();
-        }
+     
     }
 
 }

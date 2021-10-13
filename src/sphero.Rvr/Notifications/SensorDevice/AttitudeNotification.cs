@@ -1,5 +1,8 @@
 ﻿using System;
+
 using sphero.Rvr.Protocol;
+
+using UnitsNet;
 
 namespace sphero.Rvr.Notifications.SensorDevice
 {
@@ -12,18 +15,18 @@ namespace sphero.Rvr.Notifications.SensorDevice
                 throw new ArgumentNullException(nameof(rawData));
             }
 
-            Pitch = rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(-180, 180);
+            Pitch = Angle.FromDegrees(rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(-180, 180));
             offset += sizeof(ushort);
-            Roll = rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(-90, 90);
+            Roll = Angle.FromDegrees(rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(-90, 90));
             offset += sizeof(ushort);
-            Yaw = rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(-180, 180);
-            
+            Yaw = Angle.FromDegrees(rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(-180, 180));
+
 
             return 3 * sizeof(ushort);
         }
 
-        public float Pitch { get; private set; }
-        public float Roll { get; private set; }
-        public float Yaw { get; private set; }
+        public Angle Pitch { get; private set; }
+        public Angle Roll { get; private set; }
+        public Angle Yaw { get; private set; }
     }
 }

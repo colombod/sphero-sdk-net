@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace sphero.Rvr.Notifications{
     internal static class NotificationExtensions {
-        private static Dictionary<Type, (byte SourceId, byte DeviceId, byte CommandId)> _typeToKey = new(){
+        private static readonly Dictionary<Type, (byte SourceId, byte DeviceId, byte CommandId)> TypeToKey = new(){
                             [typeof(sphero.Rvr.Notifications.DriveDevice.MotorStallNotification)] = (2, 22, 38),
                             [typeof(sphero.Rvr.Notifications.DriveDevice.MotorFaultNotification)] = (2, 22, 40),
                             [typeof(sphero.Rvr.Notifications.SensorDevice.GyroMaxNotification)] = (2, 24, 16),
@@ -15,8 +15,29 @@ namespace sphero.Rvr.Notifications{
                             [typeof(sphero.Rvr.Notifications.SensorDevice.MotorThermalProtectionStatusNotification)] = (2, 24, 77),
                             [typeof(sphero.Rvr.Notifications.PowerDevice.BatteryVoltageStateChangeNotification)] = (1, 19, 28),
                 };
+
+        private static readonly Dictionary<Type, SensorId> TypeToSensorId = new()
+        {
+            [typeof(sphero.Rvr.Notifications.SensorDevice.QuaternionNotification)] = SensorId.Quaternion,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.SpeedNotification)] = SensorId.Speed,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.VelocityNotification)] = SensorId.Velocity,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.GyroscopeNotification)] = SensorId.Gyroscope,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.ColorDetectionNotification)] = SensorId.ColorDetection,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.AmbientLightNotification)] = SensorId.AmbientLight,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.AttitudeNotification)] = SensorId.Attitude,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.AccelerometerNotification)] = SensorId.Accelerometer,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.LocatorNotification)] = SensorId.Locator,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.CoreTimeLowerNotification)] = SensorId.CoreTimeLower,
+            [typeof(sphero.Rvr.Notifications.SensorDevice.CoreTimeUpperNotification)] = SensorId.CoreTimeUpper
+        };
+
         public static bool TryGetKey(Type messageType, out (byte SourceId, byte DeviceId, byte CommandId) key ){
-            return _typeToKey.TryGetValue(messageType, out key);
+            return TypeToKey.TryGetValue(messageType, out key);
+        }
+
+        public static bool TryGetSensorId(Type messageType, out SensorId sensorId)
+        {
+            return TypeToSensorId.TryGetValue(messageType, out sensorId);
         }
 
         public static Event ToNotification(this Message message){

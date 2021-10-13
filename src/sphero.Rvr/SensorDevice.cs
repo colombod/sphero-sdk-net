@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +19,7 @@ namespace sphero.Rvr
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
             _notificationManager = new NotificationManager(_driver);
-            _streamingService = new StreamingService(_notificationManager);
+            _streamingService = new StreamingService(_driver);
         }
 
         public Task EnableGyroMaxNotificationsAsync(bool enable, CancellationToken cancellationToken)
@@ -206,5 +205,62 @@ namespace sphero.Rvr
         {
             return _notificationManager.Subscribe(onNotification);
         }
+
+       
+        public IDisposable SubscribeToStream(Action<AccelerometerNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<AmbientLightNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<AttitudeNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<ColorDetectionNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<CoreTimeLowerNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<CoreTimeUpperNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<GyroscopeNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<LocatorNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<QuaternionNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<SpeedNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
+        public IDisposable SubscribeToStream(Action<VelocityNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
+
     }
 }

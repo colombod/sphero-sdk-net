@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using sphero.Rvr.Commands.SensorDevice;
-using sphero.Rvr.Commands.SystemInfoDevice;
 using sphero.Rvr.Notifications;
 using sphero.Rvr.Notifications.SensorDevice;
 using sphero.Rvr.Protocol;
@@ -13,15 +12,18 @@ namespace sphero.Rvr
 {
     internal class StreamingService
     {
-        private readonly NotificationManager _notificationManager;
+        private readonly Driver _driver;
         private IReadOnlyCollection<SensorId> _activeSensors;
         private Dictionary<byte, Dictionary<byte, Slot>> _processorToSlots = new();
         private Dictionary<SensorId, Subject<Event>> _channels;
 
-        public StreamingService(NotificationManager notificationManager)
+        public StreamingService(Driver driver)
         {
-            _notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
-            notificationManager.Subscribe((Action<StreamingServiceDataNotification>)OnStreamingData);
+            _driver = driver ?? throw new ArgumentNullException(nameof(driver));
+
+            _driver.Where(m => m.Header.CommandId == 61 && m.Header.DeviceId == DeviceIdentifier.Sensor)
+                .Select(m => new StreamingServiceDataNotification(m))
+                .Subscribe(OnStreamingData);
         }
 
         private void OnStreamingData(StreamingServiceDataNotification streamingServiceDataNotification)
@@ -195,9 +197,6 @@ namespace sphero.Rvr
                     throw new ArgumentOutOfRangeException(nameof(sensorId), sensorId, null);
             }
         }
-
-
-
         private (byte processorId, byte slotId) SensorToProcessorAndSlotId(SensorId sensorId)
         {
             switch (sensorId)
@@ -221,6 +220,17 @@ namespace sphero.Rvr
                 default:
                     throw new ArgumentOutOfRangeException(nameof(sensorId), sensorId, null);
             }
+        }
+
+        public IDisposable Subscribe<TNotification>(Action<TNotification> onNext) where TNotification : Event
+        {
+            if (NotificationExtensions.TryGetSensorId(typeof(TNotification), out var key) && _channels.TryGetValue(key, out var channel))
+            {
+                return channel.OfType<TNotification>().Subscribe(onNext);
+            }
+
+            throw new InvalidOperationException(
+                $"Notifications of type {typeof(TNotification).FullName} are not supported in current configuration");
         }
     }
 }
