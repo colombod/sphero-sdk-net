@@ -76,7 +76,7 @@ namespace sphero.Rvr
                 throw new InvalidOperationException("not enough data");
             }
 
-            return BitConverter.ToInt64(rawBytes.Reverse().ToArray(), 0);
+            return BitConverter.ToSingle(rawBytes.Reverse().ToArray(), 0);
         }
 
         public static string ToStringFromNullTerminated(this byte[] rawBytes, bool terminatorOptional = false)

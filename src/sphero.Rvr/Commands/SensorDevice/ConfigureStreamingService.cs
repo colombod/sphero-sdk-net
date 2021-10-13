@@ -27,7 +27,7 @@ namespace sphero.Rvr.Commands.SensorDevice
 
         public override Message ToMessage()
         {
-            var rawData = new byte[16];
+            var rawData = new byte[_configuration.Length + 1];
             rawData[0] = _token;
             Buffer.BlockCopy(_configuration, 0, rawData, 1, _configuration.Length);
             var header = new Header(

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using sphero.Rvr.Commands.SensorDevice;
+using sphero.Rvr.Notifications.SensorDevice;
 using sphero.Rvr.Responses.SensorDevice;
 
 namespace sphero.Rvr
@@ -13,10 +13,14 @@ namespace sphero.Rvr
     public class SensorDevice
     {
         private readonly Driver _driver;
+        private readonly NotificationManager _notificationManager;
+        private readonly StreamingService _streamingService;
 
         public SensorDevice(Driver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
+            _notificationManager = new NotificationManager(_driver);
+            _streamingService = new StreamingService(_notificationManager);
         }
 
         public Task EnableGyroMaxNotificationsAsync(bool enable, CancellationToken cancellationToken)
@@ -95,9 +99,9 @@ namespace sphero.Rvr
             return new AmbientLightSensorValue(response);
         }
 
-        public Task EnableColorDetectionNotificationsAsync(bool enable, CancellationToken cancellationToken)
+        public Task EnableColorDetectionNotificationsAsync(bool enable, TimeSpan interval, byte minimumConfidenceThreshold, CancellationToken cancellationToken)
         {
-            var enableColorDetectionNotifications = new EnableColorDetectionNotifications(enable);
+            var enableColorDetectionNotifications = new EnableColorDetectionNotifications(enable, interval, minimumConfidenceThreshold);
             return _driver.SendAsync(enableColorDetectionNotifications.ToMessage(), cancellationToken);
         }
 
@@ -178,7 +182,7 @@ namespace sphero.Rvr
             await _driver.SendAsync(startSt.ToMessage(), cancellationToken);
         }
 
-        public async Task StopStreamingServiceAsync(TimeSpan interval, CancellationToken cancellationToken)
+        public async Task StopStreamingServiceAsync(CancellationToken cancellationToken)
         {
             var stopNordic = new StopStreamingService(1);
             var stopSt = new StopStreamingService(2);
@@ -187,84 +191,20 @@ namespace sphero.Rvr
             await _driver.SendAsync(stopSt.ToMessage(), cancellationToken);
         }
 
-        public async Task ConfigureSensorStreamingAsync(IReadOnlyCollection<SensorId> sensors, CancellationToken cancellationToken)
+        public async Task ConfigureSensorStreamingAsync(IReadOnlyCollection<SensorId> sensors,
+            CancellationToken cancellationToken)
         {
-            var activeSensors = new HashSet<SensorId>(sensors);
+            var configurationMessages =  _streamingService.Configure(sensors);
 
-            var configureNordic = CreateNordicConfiguration(activeSensors);
-            var configureSt = CreateStConfiguration(activeSensors);
-
-            foreach (var configureStreamingService in configureSt.Concat(configureNordic))
+            foreach (var configureStreamingService in configurationMessages)
             {
                 await _driver.SendAsync(configureStreamingService.ToMessage(), cancellationToken);
             }
         }
 
-        private IEnumerable<ConfigureStreamingService> CreateStConfiguration(IEnumerable<SensorId> activeSensors)
+        public IDisposable SubscribeToColorDetectionNotifications(Action<ColorDetectionNotification> onNotification)
         {
-            var slots = new Dictionary<byte, List<byte>>();
-
-            foreach (var activeSensor in activeSensors)
-            {
-                switch (activeSensor)
-                {
-                    case SensorId.ColorDetection:
-                        AppendOrSet(1, new List<byte> { 0x00, (byte)activeSensor, (byte)SensorDataSize.EightBit}, slots);
-                            break;
-                    case SensorId.CoreTimeLower:
-                    case SensorId.CoreTimeUpper:
-                        AppendOrSet(2, new List<byte> { 0x00, (byte)activeSensor, (byte)SensorDataSize.ThirtyTwoBit }, slots);
-                        break;
-                    case SensorId.AmbientLight:
-                        AppendOrSet(3, new List<byte> { 0x00, (byte)activeSensor, (byte)SensorDataSize.SixteenBit }, slots);
-                        break;
-                }
-            }
-
-            foreach (var (key, value) in slots)
-            {
-                yield return new ConfigureStreamingService(2, key, value.ToArray());
-            }
-        }
-
-        private static void AppendOrSet(byte slotId, List<byte> rawData, IDictionary<byte, List<byte>> slots)
-        {
-            if (slots.TryGetValue(slotId, out var oldRawData))
-            {
-                oldRawData.AddRange(rawData);
-            }
-            else
-            {
-                slots[slotId] = rawData;
-            }
-        }
-
-        private IEnumerable<ConfigureStreamingService> CreateNordicConfiguration(IEnumerable<SensorId> activeSensors)
-        {
-            var slots = new Dictionary<byte, List<byte>>();
-
-            foreach (var activeSensor in activeSensors)
-            {
-                switch (activeSensor)
-                {
-                    case SensorId.Quaternion:
-                        AppendOrSet(1, new List<byte> { 0x00, (byte)activeSensor, (byte)SensorDataSize.ThirtyTwoBit }, slots);
-                        break;
-                    case SensorId.Attitude:
-                    case SensorId.Accelerometer:
-                        AppendOrSet(1, new List<byte> { 0x00, (byte)activeSensor, (byte)SensorDataSize.SixteenBit }, slots);
-                        break;
-                    case SensorId.Locator:
-                    case SensorId.Velocity:
-                    case SensorId.Speed:
-                        AppendOrSet(2, new List<byte> { 0x00, (byte)activeSensor, (byte)SensorDataSize.ThirtyTwoBit }, slots);
-                        break;
-                }
-            }
-            foreach (var (key, value) in slots)
-            {
-                yield return new ConfigureStreamingService(2, key, value.ToArray());
-            }
+            return _notificationManager.Subscribe(onNotification);
         }
     }
 }

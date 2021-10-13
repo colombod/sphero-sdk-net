@@ -26,6 +26,7 @@ namespace sphero.Rvr
 
         private void ProcessMessage(Message message)
         {
+
             (byte SourceId, byte DeviceId, byte CommandId) key = new(message.Header.SourceId, (byte)message.Header.DeviceId,
                 message.Header.CommandId);
             if (_eventChannels.TryGetValue(key, out var channel))

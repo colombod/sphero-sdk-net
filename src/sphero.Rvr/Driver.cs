@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.IO.Pipelines;
 using System.IO.Ports;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -47,7 +48,7 @@ namespace sphero.Rvr
             var buffer = ArrayPool<byte>.Shared.Rent(_serialPort.BytesToRead);
 
             var read = _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
-            //Console.WriteLine($"[{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
+            Console.WriteLine($"Received [{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
             _pipe.Writer.Write(buffer[..read]);
             _pipe.Writer.FlushAsync().GetAwaiter().OnCompleted(() =>
             {
@@ -112,6 +113,7 @@ namespace sphero.Rvr
             }
 
             var rawBytes = message.ToRawBytes();
+            Console.WriteLine($"Sending [{string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
             _serialPort.Write(rawBytes, 0, rawBytes.Length);
             return Task.CompletedTask;
         }

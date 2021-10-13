@@ -14,7 +14,7 @@ namespace sphero.Rvr.Notifications.SensorDevice
 
             Color = new Color(message.Data[0], message.Data[1], message.Data[2]);
 
-            Confidence = message.Data[3] / 255f;
+            Confidence = ((float)message.Data[3]) / 255.0f;
             ColorClassificationId = message.Data[4];
         }
 

@@ -1,7 +1,9 @@
-﻿using sphero.Rvr;
+﻿using System;
+using sphero.Rvr;
 
 using System.Threading;
 using System.Threading.Tasks;
+using sphero.Rvr.Responses.SensorDevice;
 
 namespace sphero.Rvr.Console
 {
@@ -23,6 +25,8 @@ namespace sphero.Rvr.Console
 
             await power.WakeAsync(CancellationToken.None);
 
+            await TestDevice(new SensorDevice(driver));
+
             await TestDevice(new SystemInfoDevice(driver));
 
             await TestDevice(new IoDevice(driver));
@@ -35,16 +39,54 @@ namespace sphero.Rvr.Console
 
         }
 
+        private static async Task TestDevice(SensorDevice sensorDevice)
+        { 
+            var ambientLightSensorValue = await sensorDevice.GetAmbientLightSensorValueAsync(CancellationToken.None);
+            System.Console.WriteLine(ambientLightSensorValue.Value);
+
+            //sensorDevice.SubscribeToColorDetectionNotifications(notification =>
+            //{
+            //    System.Console.WriteLine($"{notification.GetType().Name} : {notification.Color}, ClassificationId {notification.ColorClassificationId}, Confidence {notification.Confidence:F2}");
+            //});
+
+            //await sensorDevice.EnableColorDetectionAsync(true, CancellationToken.None);
+
+            //await sensorDevice.EnableColorDetectionNotificationsAsync(true, TimeSpan.FromSeconds(1), 0,  CancellationToken.None);
+            
+
+            await sensorDevice.ConfigureSensorStreamingAsync(
+                new[]
+                {
+                    SensorId.AmbientLight, 
+                    SensorId.Accelerometer, 
+                    SensorId.Attitude,
+                    SensorId.ColorDetection,
+                    //SensorId.CoreTimeLower, 
+                    //SensorId.CoreTimeUpper, 
+                    SensorId.Gyroscope, 
+                    SensorId.Locator,
+                    SensorId.Quaternion, 
+                    SensorId.Speed, 
+                    SensorId.Velocity
+                }, CancellationToken.None);
+
+            await sensorDevice.StartStreamingServiceAsync(TimeSpan.FromSeconds(1), CancellationToken.None);
+
+
+
+            await Task.Delay(TimeSpan.FromSeconds(100));
+
+            await sensorDevice.StopStreamingServiceAsync(CancellationToken.None);
+        }
         private static async Task TestDevice(IoDevice io)
         {
-            await io.SetAllLedsOffAsync( CancellationToken.None);
+            await io.SetAllLedsOffAsync(CancellationToken.None);
 
             await Task.Delay(1000);
 
             await io.SetLedsAsync(LedBitMask.HeadLightRight, Color.Colors[ColorNames.Orange].ToRawBytes(), CancellationToken.None);
 
             await Task.Delay(1000);
-
 
             await io.SetAllLedsAsync(Color.Colors[ColorNames.Blue], CancellationToken.None);
 

@@ -32,5 +32,11 @@ namespace sphero.Rvr
         {
             return new[] { Red, Green, Blue };
         }
+
+        public override string ToString()
+        {
+            return $"[R {Red:X} G {Green:X} B {Blue:X}]";
+        }
+
     }
 }
