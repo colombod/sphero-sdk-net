@@ -41,15 +41,14 @@ namespace sphero.Rvr.Commands.IoDevice
         private byte[] GetRawData()
         {
             var data = new byte[sizeof(uint) + (_brightnessValues.Length * sizeof(byte))];
-            
+           
             var value = (uint)_ledBitMask;
-            for (var i = 3; i >= 0; i--)
-            {
-                var byteValue = value & 0xFF;
-                data[i] = (byte)byteValue;
-                value = (value - byteValue) / 256;
-            }
 
+            data[3] = (byte)(value & 0xFF);
+            data[2] = (byte)((value >> 8) & 0xFF);
+            data[1] = (byte)((value >> 16) & 0xFF);
+            data[0] = (byte)((value >> 24) & 0xFF);
+            
             for (var i = 0; i < _brightnessValues.Length; i++)
             {
                 data[4 + i] = _brightnessValues[i];

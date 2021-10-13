@@ -27,19 +27,24 @@ namespace sphero.Rvr.Console
 
             await TestDevice(new IoDevice(driver));
 
-           
-
             System.Console.ReadLine();
 
             await power.SleepAsync(CancellationToken.None);
+
+            await Task.Delay(1000);
 
         }
 
         private static async Task TestDevice(IoDevice io)
         {
-            await io.SetAllLedsAsync(Color.Colors[ColorNames.Off], CancellationToken.None);
+            await io.SetAllLedsOffAsync( CancellationToken.None);
 
             await Task.Delay(1000);
+
+            await io.SetLedsAsync(LedBitMask.HeadLightRight, Color.Colors[ColorNames.Orange].ToRawBytes(), CancellationToken.None);
+
+            await Task.Delay(1000);
+
 
             await io.SetAllLedsAsync(Color.Colors[ColorNames.Blue], CancellationToken.None);
 

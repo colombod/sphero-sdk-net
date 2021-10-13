@@ -27,5 +27,10 @@ namespace sphero.Rvr
             Green = green;
             Blue = blue;
         }
+
+        public byte[] ToRawBytes()
+        {
+            return new[] { Red, Green, Blue };
+        }
     }
 }
