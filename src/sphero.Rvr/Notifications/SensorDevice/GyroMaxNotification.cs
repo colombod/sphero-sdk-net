@@ -1,4 +1,5 @@
 ﻿using sphero.Rvr.Protocol;
+
 using System;
 
 namespace sphero.Rvr.Notifications.SensorDevice
@@ -7,7 +8,17 @@ namespace sphero.Rvr.Notifications.SensorDevice
     {
         public GyroMaxNotification(Message message)
         {
-            throw new NotImplementedException();
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            Flags = (GyroMaxFlag)message.Data[0];
+        }
+
+        public GyroMaxFlag Flags
+        {
+            get;
         }
     }
 }

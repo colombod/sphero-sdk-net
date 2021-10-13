@@ -5,23 +5,42 @@ namespace sphero.Rvr.Notifications.SensorDevice
 {
     public class ColorDetectionNotification : Event
     {
-        public ColorDetectionNotification(Message message)
+        public ColorDetectionNotification()
         {
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
 
-            Color = new Color(message.Data[0], message.Data[1], message.Data[2]);
-
-            Confidence = ((float)message.Data[3]) / 255.0f;
-            ColorClassificationId = message.Data[4];
+        }
+        public ColorDetectionNotification(Message message): this(message?.Data)
+        {
+            if (message == null) throw new ArgumentNullException(nameof(message));
+            FromMessage(message);
         }
 
-        public byte ColorClassificationId { get; }
+        public ColorDetectionNotification(byte[] rawData)
+        {
+            if (rawData == null) throw new ArgumentNullException(nameof(rawData));
+            FromRawData(rawData, 0);
+        }
 
-        public float Confidence { get; }
+        public void FromMessage(Message message)
+        {
+            FromRawData(message.Data, 0);
+        }
 
-        public Color Color { get; }
+        public int FromRawData(byte[] rawData, int offset)
+        {
+            if (rawData == null) throw new ArgumentNullException(nameof(rawData));
+
+            Color = new Color(rawData[offset+0], rawData[offset+1], rawData[offset+2]);
+
+            Confidence = ((float)rawData[offset+3]) / 255.0f;
+            ColorClassificationId = rawData[offset+4];
+            return 5;
+        }
+
+        public byte ColorClassificationId { get; private set; }
+
+        public float Confidence { get; private set; }
+
+        public Color Color { get; private set; }
     }
 }

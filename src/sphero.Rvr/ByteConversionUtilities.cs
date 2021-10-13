@@ -49,6 +49,24 @@ namespace sphero.Rvr
             return BitConverter.ToUInt16(rawBytes.Reverse().ToArray(), 0);
         }
 
+        public static float ToFloatInRange(this ushort value, float min, float max)
+        {
+            var normalized = ((float)value) / ushort.MaxValue;
+            return ((max - min) * normalized) - min;
+        }
+
+        public static float ToFloatInRange(this byte value, float min, float max)
+        {
+            var normalized = ((float)value) / byte.MaxValue;
+            return ((max - min) * normalized) - min;
+        }
+
+        public static float ToFloatInRange(this uint value, float min, float max)
+        {
+            var normalized = ((float)value) / uint.MaxValue;
+            return ((max - min) * normalized) - min;
+        }
+
         public static uint ToUInt(this byte[] rawBytes)
         {
             if (rawBytes.Length < 1 * sizeof(uint))
