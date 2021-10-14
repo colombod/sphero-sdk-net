@@ -8,10 +8,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Pocket;
-using sphero.Rvr.Commands.SensorDevice;
-using sphero.Rvr.Notifications;
-using sphero.Rvr.Notifications.SensorDevice;
-using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr.Devices
 {
