@@ -1,6 +1,8 @@
 ﻿using sphero.Rvr.Devices;
 using sphero.Rvr.Notifications.SensorDevice;
+
 using System;
+using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,9 +19,11 @@ namespace sphero.Rvr.Console
             await rover.WakeAsync(CancellationToken.None);
             await rover.ConfigureRoverAsync(CancellationToken.None);
 
+            System.Console.WriteLine(nameof(TestLeds));
             await TestLeds(rover, CancellationToken.None);
-          
 
+            System.Console.WriteLine(nameof(TestSensorSubscriptions));
+            await TestSensorSubscriptions(rover, CancellationToken.None);
 
             await rover.SleepAsync(CancellationToken.None);
 
@@ -50,6 +54,31 @@ namespace sphero.Rvr.Console
 
         }
 
+        private static async Task TestSensorSubscriptions(Rover rover, CancellationToken cancellationToken)
+        {
+            var subscriptions = new CompositeDisposable
+            {
+                rover.AccelerationStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.AccelerationStream)}] => {notification}")),
+
+                rover.AmbientLightStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.AmbientLightStream)}] => {notification}")),
+
+                rover.AttitudeStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.AttitudeStream)}] => {notification}")),
+
+                rover.QuaternionStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.QuaternionStream)}] => {notification}")),
+
+                rover.ColorDetectionStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.ColorDetectionStream)}] => {notification}")),
+
+                rover.GyroscopeStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.GyroscopeStream)}] => {notification}")),
+
+                rover.VelocityStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.VelocityStream)}] => {notification}")),
+
+                rover.SpeedStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.SpeedStream)}] => {notification}")),
+        };
+
+            await Task.Delay(3000, cancellationToken);
+            subscriptions.Dispose();
+        }
+
         private static async Task TestLeds(Rover rover, CancellationToken cancellationToken)
         {
             await rover.SetAllLedOffAsync(cancellationToken);
@@ -77,113 +106,6 @@ namespace sphero.Rvr.Console
             await rover.SetAllLedOffAsync(cancellationToken);
         }
 
-        private static async Task TestDevice(SensorDevice sensorDevice)
-        {
-            var ambientLightSensorValue = await sensorDevice.GetAmbientLightSensorValueAsync(CancellationToken.None);
-            System.Console.WriteLine(ambientLightSensorValue.Value);
-
-            // await sensorDevice.EnableColorDetectionAsync(true, CancellationToken.None);
-
-            //sensorDevice.SubscribeToColorDetectionNotifications(notification =>
-            //{
-            //    System.Console.WriteLine($"{notification.GetType().Name} : {notification.Color}, ClassificationId {notification.ColorClassificationId}, Confidence {notification.Confidence:F2}");
-            //});
-
-            //await sensorDevice.EnableColorDetectionNotificationsAsync(true, TimeSpan.FromSeconds(1), 0,  CancellationToken.None);
-
-
-            await sensorDevice.ConfigureSensorStreamingAsync(
-                new[]
-                {
-                    SensorId.AmbientLight,
-                    SensorId.Accelerometer,
-                    SensorId.Attitude,
-                    SensorId.ColorDetection,
-                    SensorId.CoreTimeLower,
-                    SensorId.CoreTimeUpper,
-                    SensorId.Gyroscope,
-                    SensorId.Locator,
-                    SensorId.Quaternion,
-                    SensorId.Speed,
-                    SensorId.Velocity
-                }, CancellationToken.None);
-
-            await sensorDevice.StartStreamingServiceAsync(TimeSpan.FromSeconds(1), CancellationToken.None);
-
-            SubscribeToStStreams();
-
-            SubscribeToNordicStreams();
-
-            await Task.Delay(TimeSpan.FromSeconds(100));
-
-            await sensorDevice.StopStreamingServiceAsync(CancellationToken.None);
-
-            void SubscribeToNordicStreams()
-            {
-                sensorDevice.SubscribeToStream((ColorDetectionNotification notification) =>
-                {
-                    System.Console.WriteLine(
-                        $"{notification.GetType().Name} : [{notification.Color}, {notification.Confidence}, {notification.ColorClassificationId}]");
-                });
-
-                sensorDevice.SubscribeToStream((CoreTimeLowerNotification notification) =>
-                {
-                    System.Console.WriteLine($"{notification.GetType().Name} : [{notification.Time}]");
-                });
-
-                sensorDevice.SubscribeToStream((CoreTimeUpperNotification notification) =>
-                {
-                    System.Console.WriteLine($"{notification.GetType().Name} : [{notification.Time}]");
-                });
-
-                sensorDevice.SubscribeToStream((AmbientLightNotification notification) =>
-                {
-                    System.Console.WriteLine($"{notification.GetType().Name} : [{notification.Light}]");
-                });
-            }
-
-            void SubscribeToStStreams()
-            {
-                sensorDevice.SubscribeToStream((GyroscopeNotification notification) =>
-                {
-                    System.Console.WriteLine(
-                        $"{notification.GetType().Name} : [{notification.X}, {notification.Y}, {notification.Z}]");
-                });
-
-                sensorDevice.SubscribeToStream((AttitudeNotification notification) =>
-                {
-                    System.Console.WriteLine(
-                        $"{notification.GetType().Name} : [{notification.Pitch}, {notification.Roll}, {notification.Yaw}]");
-                });
-
-                sensorDevice.SubscribeToStream((AccelerometerNotification notification) =>
-                {
-                    System.Console.WriteLine(
-                        $"{notification.GetType().Name} : [{notification.X}, {notification.Y}, {notification.Z}]");
-                });
-
-                sensorDevice.SubscribeToStream((VelocityNotification notification) =>
-                {
-                    System.Console.WriteLine($"{notification.GetType().Name} : [{notification.X}, {notification.Y}]");
-                });
-
-                sensorDevice.SubscribeToStream((SpeedNotification notification) =>
-                {
-                    System.Console.WriteLine($"{notification.GetType().Name} : [{notification.Speed}]");
-                });
-
-                sensorDevice.SubscribeToStream((QuaternionNotification notification) =>
-                {
-                    System.Console.WriteLine(
-                        $"{notification.GetType().Name} : [{notification.W} {notification.X} {notification.Y} {notification.Z}]");
-                });
-
-                sensorDevice.SubscribeToStream((LocatorNotification notification) =>
-                {
-                    System.Console.WriteLine($"{notification.GetType().Name} : [{notification.X} {notification.Y}]");
-                });
-            }
-        }
 
         private static async Task TestDevice(SystemInfoDevice systemInfo)
         {

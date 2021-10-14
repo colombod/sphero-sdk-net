@@ -34,6 +34,12 @@ namespace sphero.Rvr
         private readonly ISubject<Attitude> _attitudeStream = new ReplaySubject<Attitude>(1);
         private readonly ISubject<Acceleration3D> _accelerationStream = new ReplaySubject<Acceleration3D>(1);
         private readonly ISubject<Illuminance> _ambientLightStream = new ReplaySubject<Illuminance>(1);
+        private readonly ISubject<ColorDetection> _colorDetectionStream = new ReplaySubject<ColorDetection>(1);
+        private readonly ISubject<RotationalSpeed3D>  _gyroscopeStream = new ReplaySubject<RotationalSpeed3D>(1);
+        private readonly ISubject<Speed2D> _velocityStream = new ReplaySubject<Speed2D>(1);
+        private readonly ISubject<Speed> _speedStream = new ReplaySubject<Speed>(1);
+        private readonly ISubject<uint>  _coreTimeLowerStream = new ReplaySubject<uint>(1);
+        private readonly ISubject<uint> _coreTimeUpperStream = new ReplaySubject<uint>(1);
 
         private HashSet<SensorId> _activeSensors = new HashSet<SensorId>();
 
@@ -55,6 +61,18 @@ namespace sphero.Rvr
         public IObservable<Acceleration3D> AccelerationStream => _accelerationStream;
 
         public IObservable<Illuminance> AmbientLightStream => _ambientLightStream;
+
+        public IObservable<ColorDetection> ColorDetectionStream => _colorDetectionStream;
+
+        public IObservable<RotationalSpeed3D> GyroscopeStream => _gyroscopeStream;
+
+        public IObservable<Speed2D> VelocityStream => _velocityStream;
+
+        public IObservable<Speed> SpeedStream => _speedStream;
+
+        public IObservable<uint> CoreTimeLowerStream => _coreTimeLowerStream;
+
+        public IObservable<uint> CoreTimeUpperStream => _coreTimeUpperStream;
 
         public void EnableLogging(
             Action<(byte LogLevel, DateTime TimestampUtc,
@@ -119,18 +137,30 @@ namespace sphero.Rvr
                             _accelerationStream.OnNext(new Acceleration3D(acn.X, acn.Y, acn.Z))));
                         break;
                     case SensorId.ColorDetection:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((ColorDetectionNotification cdn) =>
+                            _colorDetectionStream.OnNext(new ColorDetection(cdn.Color, cdn.Confidence))));
                         break;
                     case SensorId.Gyroscope:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((GyroscopeNotification gyn) =>
+                            _gyroscopeStream.OnNext(new RotationalSpeed3D(gyn.X, gyn.Y, gyn.Z))));
                         break;
                     case SensorId.Locator:
                         break;
                     case SensorId.Velocity:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((VelocityNotification vn) =>
+                            _velocityStream.OnNext(new Speed2D(vn.X, vn.Y))));
                         break;
                     case SensorId.Speed:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((SpeedNotification sn) =>
+                            _speedStream.OnNext(sn.Speed)));
                         break;
                     case SensorId.CoreTimeLower:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((CoreTimeLowerNotification ctln) =>
+                            _coreTimeLowerStream.OnNext(ctln.Time)));
                         break;
                     case SensorId.CoreTimeUpper:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((CoreTimeUpperNotification ctun) =>
+                            _coreTimeUpperStream.OnNext(ctun.Time)));
                         break;
                     case SensorId.AmbientLight:
                         _disposables.Add(_sensorDevice.SubscribeToStream((AmbientLightNotification an) =>
@@ -221,4 +251,9 @@ namespace sphero.Rvr
     public record Attitude(Angle Pitch, Angle Roll, Angle Yaw);
 
     public record Acceleration3D(Acceleration X, Acceleration Y, Acceleration Z);
+
+    public record Speed2D(Speed X, Speed Y);
+
+    public record RotationalSpeed3D(RotationalSpeed X, RotationalSpeed Y, RotationalSpeed Z);
+    public record ColorDetection(Color Color, float Confidence);
 }
