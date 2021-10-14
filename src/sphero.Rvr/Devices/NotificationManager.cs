@@ -2,9 +2,10 @@
 using sphero.Rvr.Protocol;
 using System;
 using System.Collections.Concurrent;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Pocket;
+using CompositeDisposable = System.Reactive.Disposables.CompositeDisposable;
 
 namespace sphero.Rvr.Devices
 {
@@ -27,11 +28,16 @@ namespace sphero.Rvr.Devices
         private void ProcessMessage(Message message)
         {
 
+            using var operation = Logger.Log.OnEnterAndExit();
             (byte SourceId, byte DeviceId, byte CommandId) key = new(message.Header.SourceId, (byte)message.Header.DeviceId,
                 message.Header.CommandId);
             if (_eventChannels.TryGetValue(key, out var channel))
             {
                 channel.OnNext(message.ToNotification());
+            }
+            else
+            {
+                operation.Warning($"Cannot find channel for message {message}");
             }
         }
 
