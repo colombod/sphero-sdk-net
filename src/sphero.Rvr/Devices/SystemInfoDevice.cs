@@ -1,16 +1,16 @@
-﻿using System;
+﻿using sphero.Rvr.Commands.SystemInfoDevice;
+using sphero.Rvr.Responses.SystemInfoDevice;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Commands.SystemInfoDevice;
-using sphero.Rvr.Responses.SystemInfoDevice;
 
 namespace sphero.Rvr.Devices
 {
     public class SystemInfoDevice
     {
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
 
-        public SystemInfoDevice(Driver driver)
+        public SystemInfoDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
         }

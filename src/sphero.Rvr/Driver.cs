@@ -1,4 +1,5 @@
-﻿using System;
+﻿using sphero.Rvr.Protocol;
+using System;
 using System.Buffers;
 using System.IO.Pipelines;
 using System.IO.Ports;
@@ -6,11 +7,10 @@ using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr
 {
-    public class Driver : IDisposable, IObservable<Message>
+    public class Driver : IDisposable, IDriver
     {
         private readonly SerialPort _serialPort;
         private readonly Pipe _pipe;
@@ -119,7 +119,7 @@ namespace sphero.Rvr
 
         public IDisposable Subscribe(IObserver<Message> observer) => _messageChannel.Subscribe(observer);
 
-     
+
     }
 
 }

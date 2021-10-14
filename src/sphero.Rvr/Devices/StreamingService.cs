@@ -1,23 +1,23 @@
-﻿using System;
+﻿using sphero.Rvr.Commands.SensorDevice;
+using sphero.Rvr.Notifications;
+using sphero.Rvr.Notifications.SensorDevice;
+using sphero.Rvr.Protocol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using sphero.Rvr.Commands.SensorDevice;
-using sphero.Rvr.Notifications;
-using sphero.Rvr.Notifications.SensorDevice;
-using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr.Devices
 {
-    internal class StreamingService
+    public class StreamingService
     {
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
         private IReadOnlyCollection<SensorId> _activeSensors;
         private Dictionary<byte, Dictionary<byte, Slot>> _processorToSlots = new();
         private Dictionary<SensorId, Subject<Event>> _channels;
 
-        public StreamingService(Driver driver)
+        public StreamingService(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
 
@@ -135,7 +135,7 @@ namespace sphero.Rvr.Devices
 
                 var slot = GetOrCreateSlot(processorId, slotId);
 
-                slot.Sensors.Add(new (sensorId, SensorToDataSize(sensorId)));
+                slot.Sensors.Add(new(sensorId, SensorToDataSize(sensorId)));
             }
 
             var messages = new List<ConfigureStreamingService>();
@@ -143,8 +143,8 @@ namespace sphero.Rvr.Devices
             {
                 foreach (var (slotId, slot) in slots)
                 {
-                    var rawConfiguration = slot.Sensors.Select(s => new byte[] { 0x00,(byte)s.sensorId, (byte) s.dataSize}).SelectMany(raw => raw).ToArray();
-                    messages.Add( new ConfigureStreamingService(processorId, slotId,rawConfiguration));
+                    var rawConfiguration = slot.Sensors.Select(s => new byte[] { 0x00, (byte)s.sensorId, (byte)s.dataSize }).SelectMany(raw => raw).ToArray();
+                    messages.Add(new ConfigureStreamingService(processorId, slotId, rawConfiguration));
                 }
             }
 
@@ -204,18 +204,18 @@ namespace sphero.Rvr.Devices
                 case SensorId.Gyroscope:
                 case SensorId.Attitude:
                 case SensorId.Accelerometer:
-                    return (2,1);
+                    return (2, 1);
                 case SensorId.Locator:
                 case SensorId.Velocity:
                 case SensorId.Speed:
-                    return (2,2);
+                    return (2, 2);
                 case SensorId.ColorDetection:
-                    return (1,1);
+                    return (1, 1);
                 case SensorId.CoreTimeLower:
                 case SensorId.CoreTimeUpper:
-                    return (1,2);
+                    return (1, 2);
                 case SensorId.AmbientLight:
-                    return (1,3);
+                    return (1, 3);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(sensorId), sensorId, null);
             }

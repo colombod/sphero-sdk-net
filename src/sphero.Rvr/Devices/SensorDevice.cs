@@ -1,21 +1,21 @@
-﻿using System;
+﻿using sphero.Rvr.Commands.SensorDevice;
+using sphero.Rvr.Notifications.SensorDevice;
+using sphero.Rvr.Responses.SensorDevice;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Commands.SensorDevice;
-using sphero.Rvr.Notifications.SensorDevice;
-using sphero.Rvr.Responses.SensorDevice;
 
 namespace sphero.Rvr.Devices
 {
     public class SensorDevice
     {
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
         private readonly NotificationManager _notificationManager;
         private readonly StreamingService _streamingService;
 
-        public SensorDevice(Driver driver)
+        public SensorDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
             _notificationManager = new NotificationManager(_driver);
@@ -193,7 +193,7 @@ namespace sphero.Rvr.Devices
         public async Task ConfigureSensorStreamingAsync(IReadOnlyCollection<SensorId> sensors,
             CancellationToken cancellationToken)
         {
-            var configurationMessages =  _streamingService.Configure(sensors);
+            var configurationMessages = _streamingService.Configure(sensors);
 
             if (sensors.Contains(SensorId.ColorDetection))
             {

@@ -1,16 +1,16 @@
-﻿using System;
+﻿using sphero.Rvr.Commands.ConnectionDevice;
+using sphero.Rvr.Responses.ConnectionDevice;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Commands.ConnectionDevice;
-using sphero.Rvr.Responses.ConnectionDevice;
 
 namespace sphero.Rvr.Devices
 {
     public class ConnectionDevice
     {
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
 
-        public ConnectionDevice(Driver driver)
+        public ConnectionDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
         }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using sphero.Rvr.Notifications;
+using sphero.Rvr.Protocol;
+using System;
 using System.Collections.Concurrent;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using sphero.Rvr.Notifications;
-using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr.Devices
 {
@@ -14,7 +14,7 @@ namespace sphero.Rvr.Devices
             _eventChannels = new();
         private readonly CompositeDisposable _disposables = new();
 
-        public NotificationManager(Driver driver)
+        public NotificationManager(IDriver driver)
         {
             if (driver == null)
             {
@@ -35,7 +35,7 @@ namespace sphero.Rvr.Devices
             }
         }
 
-        public IDisposable Subscribe<TNotification>(Action<TNotification> onNext) where TNotification: Event
+        public IDisposable Subscribe<TNotification>(Action<TNotification> onNext) where TNotification : Event
         {
             if (NotificationExtensions.TryGetKey(typeof(TNotification), out var key))
             {

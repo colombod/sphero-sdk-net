@@ -1,14 +1,14 @@
-﻿using System;
+﻿using sphero.Rvr.Protocol;
+using System;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr
 {
-    public static class DriverExtensions
+    public static class IDriverExtensions
     {
-        public static async Task<Message> SendRequestAsync(this Driver driver, Message request, CancellationToken cancellationToken = default)
+        public static async Task<Message> SendRequestAsync(this IDriver driver, Message request, CancellationToken cancellationToken = default)
         {
             if (driver == null)
             {

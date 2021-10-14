@@ -1,7 +1,7 @@
-﻿using System;
+﻿using sphero.Rvr.Commands.DriveDevice;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Commands.DriveDevice;
 using GetMotorFaultState = sphero.Rvr.Responses.DriveDevice.GetMotorFaultState;
 
 namespace sphero.Rvr.Devices
@@ -10,9 +10,9 @@ namespace sphero.Rvr.Devices
     {
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Drive;
 
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
 
-        public DriveDevice(Driver driver)
+        public DriveDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
         }

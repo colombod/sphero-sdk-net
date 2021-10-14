@@ -1,11 +1,8 @@
-﻿using System;
-using sphero.Rvr;
-
+﻿using sphero.Rvr.Devices;
+using sphero.Rvr.Notifications.SensorDevice;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Devices;
-using sphero.Rvr.Notifications.SensorDevice;
-using sphero.Rvr.Responses.SensorDevice;
 
 namespace sphero.Rvr.Console
 {

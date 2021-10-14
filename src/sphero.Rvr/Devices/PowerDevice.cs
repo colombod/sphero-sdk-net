@@ -1,18 +1,18 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using sphero.Rvr.Commands.PowerDevice;
+﻿using sphero.Rvr.Commands.PowerDevice;
 using sphero.Rvr.Notifications.PowerDevice;
 using sphero.Rvr.Responses.PowerDevice;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace sphero.Rvr.Devices
 {
     public class PowerDevice : IDisposable
     {
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
         private readonly NotificationManager _notificationManager;
 
-        public PowerDevice(Driver driver)
+        public PowerDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
             _notificationManager = new NotificationManager(_driver);

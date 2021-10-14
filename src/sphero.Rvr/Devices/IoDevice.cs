@@ -1,15 +1,15 @@
-﻿using System;
+﻿using sphero.Rvr.Commands.IoDevice;
+using sphero.Rvr.Responses.IoDevice;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using sphero.Rvr.Commands.IoDevice;
-using sphero.Rvr.Responses.IoDevice;
 
 namespace sphero.Rvr.Devices
 {
     public class IoDevice
     {
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
 
         public static IReadOnlyDictionary<LedGroup, LedBitMask> GroupToLedMaskMap { get; } = new Dictionary<LedGroup, LedBitMask>
         {
@@ -26,7 +26,7 @@ namespace sphero.Rvr.Devices
             [LedGroup.UndercarriageWhite] = LedBitMask.UndercarriageWhite
         };
 
-        public IoDevice(Driver driver)
+        public IoDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
         }
