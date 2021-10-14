@@ -58,22 +58,22 @@ namespace sphero.Rvr.Console
             await sensorDevice.ConfigureSensorStreamingAsync(
                 new[]
                 {
-                    SensorId.AmbientLight, 
-                    //SensorId.Accelerometer, 
-                    //SensorId.Attitude,
+                    SensorId.AmbientLight,
+                    SensorId.Accelerometer,
+                    SensorId.Attitude,
                     SensorId.ColorDetection,
                     SensorId.CoreTimeLower,
-                    SensorId.CoreTimeUpper, 
-                    //SensorId.Gyroscope, 
-                    //SensorId.Locator,
-                    //SensorId.Quaternion, 
-                    //SensorId.Speed, 
-                    //SensorId.Velocity
+                    SensorId.CoreTimeUpper,
+                    SensorId.Gyroscope,
+                    SensorId.Locator,
+                    SensorId.Quaternion,
+                    SensorId.Speed,
+                    SensorId.Velocity
                 }, CancellationToken.None);
 
             await sensorDevice.StartStreamingServiceAsync(TimeSpan.FromSeconds(1), CancellationToken.None);
 
-            //SubscribeToStStreams();
+            SubscribeToStStreams();
 
             SubscribeToNordicStreams();
 

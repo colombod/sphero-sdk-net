@@ -132,7 +132,6 @@ namespace sphero.Rvr
             {
                 _channels[sensorId] = new Subject<Event>();
                 var (processorId, slotId) = SensorToProcessorAndSlotId(sensorId);
-                var sensorDataSize = SensorToDataSize(sensorId);
 
                 var slot = GetOrCreateSlot(processorId, slotId);
 

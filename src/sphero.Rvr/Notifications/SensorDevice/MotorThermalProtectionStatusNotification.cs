@@ -19,12 +19,12 @@ namespace sphero.Rvr.Notifications.SensorDevice
             RightMotorStatus = message.Data[9];
         }
 
-        public byte RightMotorStatus { get; private set; }
+        public byte RightMotorStatus { get; }
 
-        public Temperature RightMotorTemperature { get; private set; }
+        public Temperature RightMotorTemperature { get; }
 
-        public byte LeftMotorStatus { get; private set; }
+        public byte LeftMotorStatus { get; }
 
-        public Temperature LeftMotorTemperature { get; private set; }
+        public Temperature LeftMotorTemperature { get; }
     }
 }

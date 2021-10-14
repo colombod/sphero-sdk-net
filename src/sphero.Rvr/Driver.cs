@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.IO.Pipelines;
 using System.IO.Ports;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -29,6 +28,7 @@ namespace sphero.Rvr
             {
                 ReadMessages(cs.Token);
             }, cs.Token);
+
             _disposables.Add(Disposable.Create(() =>
             {
                 cs.Cancel();

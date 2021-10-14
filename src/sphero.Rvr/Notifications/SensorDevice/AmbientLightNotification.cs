@@ -1,5 +1,6 @@
 ﻿using System;
 using sphero.Rvr.Protocol;
+using UnitsNet;
 
 namespace sphero.Rvr.Notifications.SensorDevice
 {
@@ -12,10 +13,10 @@ namespace sphero.Rvr.Notifications.SensorDevice
                 throw new ArgumentNullException(nameof(rawData));
             }
 
-            Light = rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(0, 120000);
+            Light = Illuminance.FromLux( rawData[offset..(offset + sizeof(ushort))].ToUshort().ToFloatInRange(0, 120000));
             return 1 * sizeof(ushort);
         }
 
-        public float Light { get; private set; }
+        public Illuminance Light { get; private set; }
     }
 }

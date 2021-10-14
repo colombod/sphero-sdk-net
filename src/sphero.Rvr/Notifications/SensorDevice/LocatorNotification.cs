@@ -1,5 +1,6 @@
 ﻿using System;
 using sphero.Rvr.Protocol;
+using UnitsNet;
 
 namespace sphero.Rvr.Notifications.SensorDevice
 {
@@ -12,14 +13,14 @@ namespace sphero.Rvr.Notifications.SensorDevice
                 throw new ArgumentNullException(nameof(rawData));
             }
             
-            X = rawData[offset..(offset + sizeof(uint))].ToUInt().ToFloatInRange(-16000, 16000);
+            X = Length.FromMeters( rawData[offset..(offset + sizeof(uint))].ToUInt().ToFloatInRange(-16000, 16000));
             offset += sizeof(uint);
-            Y = rawData[offset..(offset + sizeof(uint))].ToUInt().ToFloatInRange(-16000, 16000);
+            Y = Length.FromMeters(rawData[offset..(offset + sizeof(uint))].ToUInt().ToFloatInRange(-16000, 16000));
 
             return 2 * sizeof(uint);
         }
         
-        public float X { get; private set; }
-        public float Y { get; private set; }
+        public Length X { get; private set; }
+        public Length Y { get; private set; }
     }
 }

@@ -7,7 +7,14 @@ namespace sphero.Rvr.Notifications.SensorDevice
     {
         public RobotToRobotInfraredMessageReceivedNotification(Message message)
         {
-            throw new NotImplementedException();
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            Code = message.Data[0];
         }
+
+        public byte Code { get;  }
     }
 }
