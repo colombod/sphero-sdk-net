@@ -8,6 +8,8 @@
     <Description>.NET Api for Sphero RVR platform</Description>
     <RepositoryUrl>https://github.com/colombod/sphero-sdk-net</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>RVR_SDK_icon.png</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +31,10 @@
 
   <ItemGroup>
     <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\RVR_SDK_icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
