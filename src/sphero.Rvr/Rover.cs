@@ -161,11 +161,60 @@ namespace sphero.Rvr
             return ConfigureRoverAsync(allSensors, TimeSpan.FromSeconds(0.1), cancellationToken);
         }
 
+        public async Task SetLedAsync(IDictionary<Led, Color> ledColors, CancellationToken cancellationToken)
+        {
+            uint ledMask = 0;
+            var brightness = new List<byte>();
+            foreach (var (led, color) in ledColors.OrderBy(e => ((uint)e.Key)))
+            {
+                ledMask |= (uint)led;
+                
+                switch (led)
+                {
+                    case Led.UndercarriageWhite:
+                        brightness.Add(color.ToGreyScale());
+                        break;
+                    default:
+                        brightness.AddRange(color.ToRawBytes());
+                        break;
+                }
+            }
+
+            await _ioDevice.SetLedsAsync((LedBitMask)ledMask, brightness.ToArray(), cancellationToken);
+        }
+
+        public async Task SetLedAsync(Led led , Color color, CancellationToken cancellationToken)
+        {
+            var bytes = led == Led.UndercarriageWhite ? new byte[] { color.ToGreyScale() } : color.ToRawBytes();
+
+            await _ioDevice.SetLedsAsync((LedBitMask)led, bytes, cancellationToken);
+        }
+
+        public async Task SetAllLedAsync(Color color, CancellationToken cancellationToken)
+        {
+            await _ioDevice.SetAllLedsAsync(color, cancellationToken);
+        }
+
+        public async Task SetAllLedOffAsync(CancellationToken cancellationToken)
+        {
+            await _ioDevice.SetAllLedsOffAsync( cancellationToken);
+        }
+
         public void Dispose()
         {
             _disposables?.Dispose();
             _driver.Dispose();
             _logSubscription?.Dispose();
+        }
+
+        public  Task WakeAsync(CancellationToken cancellationToken)
+        {
+            return _powerDevice.WakeAsync(cancellationToken);
+        }
+
+        public Task SleepAsync(CancellationToken cancellationToken)
+        {
+            return _powerDevice.SleepAsync(cancellationToken);
         }
     }
 

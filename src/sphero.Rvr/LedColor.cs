@@ -38,5 +38,10 @@ namespace sphero.Rvr
             return $"[R {Red:X} G {Green:X} B {Blue:X}]";
         }
 
+        public byte ToGreyScale()
+        {
+            double g = ((double)Green + (double)Red + (double)Blue) / 3.0;
+            return (byte)(g % 255);
+        }
     }
 }

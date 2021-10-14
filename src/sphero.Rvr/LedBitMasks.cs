@@ -3,7 +3,7 @@
 namespace sphero.Rvr
 {
     [Flags]
-    public enum LedBitMask
+    public enum LedBitMask : uint
     {
         HeadLightRightRed = 0x00000001,
         HeadLightRightGreen = 0x00000002,
