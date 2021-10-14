@@ -1,22 +1,27 @@
-﻿using System;
-using sphero.Rvr.Protocol;
+﻿using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr.Commands
 {
-    public abstract class Command
+    internal static class SequenceGenerator
     {
         private static byte _sequence;
 
-        protected static byte GetSequenceNumber()
+        public static byte GetSequenceNumber()
         {
             var current = _sequence;
-            _sequence = (byte)((_sequence + 1) & 256);
-            if (_sequence > 255)
-            {
-                _sequence = 0;
-            }
+            _sequence = (byte)((_sequence + 1) & 0xFF);
 
             return current;
+        }
+
+    }
+
+    public abstract class Command
+    {
+
+        protected static byte GetSequenceNumber()
+        {
+            return SequenceGenerator.GetSequenceNumber();
         }
 
         public abstract Message ToMessage();

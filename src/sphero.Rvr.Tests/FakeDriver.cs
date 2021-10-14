@@ -12,6 +12,8 @@ namespace sphero.Rvr.Tests
         public readonly Subject<Message> MessagesSubject = new();
         public readonly List<byte[]> MessagesSent = new();
 
+        public void Dispose() { }
+
         public Task SendAsync(Message message, CancellationToken cancellationToken)
         {
             MessagesSent.Add(message.ToRawBytes());

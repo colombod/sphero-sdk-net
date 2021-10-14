@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Pocket;
+using sphero.Rvr.Devices;
+using sphero.Rvr.Notifications.SensorDevice;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using Pocket;
-using sphero.Rvr.Devices;
-using sphero.Rvr.Notifications.SensorDevice;
 using UnitsNet;
 using CompositeDisposable = System.Reactive.Disposables.CompositeDisposable;
 
@@ -16,7 +16,7 @@ namespace sphero.Rvr
     public class Rover : IDisposable
     {
         private readonly CompositeDisposable _disposables = new();
-        private readonly Driver _driver;
+        private readonly IDriver _driver;
         private readonly SensorDevice _sensorDevice;
         private readonly DriveDevice _driveDevice;
         private readonly IoDevice _ioDevice;
@@ -35,19 +35,21 @@ namespace sphero.Rvr
         private readonly ISubject<Acceleration3D> _accelerationStream = new ReplaySubject<Acceleration3D>(1);
         private readonly ISubject<Illuminance> _ambientLightStream = new ReplaySubject<Illuminance>(1);
         private readonly ISubject<ColorDetection> _colorDetectionStream = new ReplaySubject<ColorDetection>(1);
-        private readonly ISubject<RotationalSpeed3D>  _gyroscopeStream = new ReplaySubject<RotationalSpeed3D>(1);
+        private readonly ISubject<RotationalSpeed3D> _gyroscopeStream = new ReplaySubject<RotationalSpeed3D>(1);
         private readonly ISubject<Speed2D> _velocityStream = new ReplaySubject<Speed2D>(1);
         private readonly ISubject<Speed> _speedStream = new ReplaySubject<Speed>(1);
         private readonly ISubject<Length2D> _locatorStream = new ReplaySubject<Length2D>(1);
-        private readonly ISubject<uint>  _coreTimeLowerStream = new ReplaySubject<uint>(1);
+        private readonly ISubject<uint> _coreTimeLowerStream = new ReplaySubject<uint>(1);
         private readonly ISubject<uint> _coreTimeUpperStream = new ReplaySubject<uint>(1);
 
         private HashSet<SensorId> _activeSensors = new HashSet<SensorId>();
-       
 
-        public Rover(string serialPort)
+
+        public Rover(string serialPort) : this(new Driver(serialPort)) { }
+
+        public Rover(IDriver driver)
         {
-            _driver = new Driver(serialPort);
+            _driver = driver;
             _sensorDevice = new SensorDevice(_driver);
             _driveDevice = new DriveDevice(_driver);
             _ioDevice = new IoDevice(_driver);
@@ -204,7 +206,7 @@ namespace sphero.Rvr
             foreach (var (led, color) in ledColors.OrderBy(e => ((uint)e.Key)))
             {
                 ledMask |= (uint)led;
-                
+
                 switch (led)
                 {
                     case Led.UndercarriageWhite:
@@ -219,7 +221,7 @@ namespace sphero.Rvr
             await _ioDevice.SetLedsAsync((LedBitMask)ledMask, brightness.ToArray(), cancellationToken);
         }
 
-        public async Task SetLedAsync(Led led , Color color, CancellationToken cancellationToken)
+        public async Task SetLedAsync(Led led, Color color, CancellationToken cancellationToken)
         {
             var bytes = led == Led.UndercarriageWhite ? new byte[] { color.ToGreyScale() } : color.ToRawBytes();
 
@@ -233,7 +235,7 @@ namespace sphero.Rvr
 
         public async Task SetAllLedOffAsync(CancellationToken cancellationToken)
         {
-            await _ioDevice.SetAllLedsOffAsync( cancellationToken);
+            await _ioDevice.SetAllLedsOffAsync(cancellationToken);
         }
 
         public void Dispose()
@@ -243,7 +245,7 @@ namespace sphero.Rvr
             _logSubscription?.Dispose();
         }
 
-        public  Task WakeAsync(CancellationToken cancellationToken)
+        public Task WakeAsync(CancellationToken cancellationToken)
         {
             return _powerDevice.WakeAsync(cancellationToken);
         }

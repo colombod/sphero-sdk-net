@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace sphero.Rvr
 {
-    public interface IDriver : IObservable<Message>
+    public interface IDriver : IObservable<Message>, IDisposable
     {
         Task SendAsync(Message message, CancellationToken cancellationToken);
     }

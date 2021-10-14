@@ -1,13 +1,14 @@
-﻿using sphero.Rvr.Protocol;
+﻿using Pocket;
+using sphero.Rvr.Protocol;
 using System;
 using System.Buffers;
+using System.Diagnostics;
 using System.IO.Pipelines;
 using System.IO.Ports;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using Pocket;
 using CompositeDisposable = System.Reactive.Disposables.CompositeDisposable;
 using Disposable = System.Reactive.Disposables.Disposable;
 
@@ -51,10 +52,7 @@ namespace sphero.Rvr
 
             var read = _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
 
-            using (var operation = Logger.Log.OnEnterAndConfirmOnExit())
-            {
-                operation.Info($"[{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
-            }
+            Logger.Log.Info($"Serial data revc: [{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
 
             _pipe.Writer.Write(buffer[..read]);
             _pipe.Writer.FlushAsync().GetAwaiter().OnCompleted(() =>
@@ -79,6 +77,10 @@ namespace sphero.Rvr
                             var endIncluded = new SequencePosition(end.Value.GetObject(), end.Value.GetInteger() + 1);
                             var rawBytes = readerResult.Buffer.Slice(start.Value, endIncluded).ToArray();
 
+                            if (rawBytes.Length == 0)
+                            {
+                                Debugger.Break();
+                            }
                             var message = Message.FromRawBytes(rawBytes);
                             _pipe.Reader.AdvanceTo(endIncluded);
                             _pipe.Reader.CancelPendingRead();
@@ -120,10 +122,7 @@ namespace sphero.Rvr
             }
 
             var rawBytes = message.ToRawBytes();
-            using (var operation = Logger.Log.OnEnterAndConfirmOnExit())
-            {
-                operation.Info($"[{ string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
-            }
+            Logger.Log.Info($"Serial data send: [{ string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
             _serialPort.Write(rawBytes, 0, rawBytes.Length);
             return Task.CompletedTask;
         }
