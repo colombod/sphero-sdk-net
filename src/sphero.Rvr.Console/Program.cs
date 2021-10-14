@@ -11,31 +11,70 @@ namespace sphero.Rvr.Console
         static async Task Main(string[] args)
         {
             var port = args.Length > 0 ? args[0] : "COM5";
-            using var driver = new Driver(port);
 
-            var power = new PowerDevice(driver);
+            var rover = new Rover(port);
 
-            power.Subscribe(notification =>
-            {
-                System.Console.WriteLine($" Battery voltage state : {notification.State}");
-            });
+            await rover.WakeAsync(CancellationToken.None);
+            await rover.ConfigureRoverAsync(CancellationToken.None);
 
-            await power.EnableBatteryVoltageStateChangeNotificationsAsync(true, CancellationToken.None);
+            await TestLeds(rover, CancellationToken.None);
+          
 
-            await power.WakeAsync(CancellationToken.None);
 
-            await TestDevice(new SensorDevice(driver));
+            await rover.SleepAsync(CancellationToken.None);
 
-            await TestDevice(new SystemInfoDevice(driver));
+            // using var driver = new Driver(port);
 
-            await TestDevice(new IoDevice(driver));
+            //var power = new PowerDevice(driver);
 
-            System.Console.ReadLine();
+            //power.Subscribe(notification =>
+            //{
+            //    System.Console.WriteLine($" Battery voltage state : {notification.State}");
+            //});
 
-            await power.SleepAsync(CancellationToken.None);
+            //await power.EnableBatteryVoltageStateChangeNotificationsAsync(true, CancellationToken.None);
+
+            //await power.WakeAsync(CancellationToken.None);
+
+            //await TestDevice(new SensorDevice(driver));
+
+            //await TestDevice(new SystemInfoDevice(driver));
+
+            //await TestDevice(new IoDevice(driver));
+
+            //System.Console.ReadLine();
+
+            //await power.SleepAsync(CancellationToken.None);
 
             await Task.Delay(1000);
 
+        }
+
+        private static async Task TestLeds(Rover rover, CancellationToken cancellationToken)
+        {
+            await rover.SetAllLedOffAsync(cancellationToken);
+
+            await rover.SetLedAsync(Led.HeadLightRight, Color.Colors[ColorNames.Orange], CancellationToken.None);
+
+            await Task.Delay(1000, cancellationToken);
+
+            await rover.SetAllLedAsync(Color.Colors[ColorNames.Blue], CancellationToken.None);
+
+            await Task.Delay(1000, cancellationToken);
+
+            await rover.SetAllLedAsync(Color.Colors[ColorNames.Pink], CancellationToken.None);
+
+            await Task.Delay(1000, cancellationToken);
+
+            await rover.SetAllLedAsync(Color.Colors[ColorNames.Green], CancellationToken.None);
+
+            await Task.Delay(1000, cancellationToken);
+
+            await rover.SetAllLedAsync(Color.Colors[ColorNames.White], CancellationToken.None);
+
+            await Task.Delay(1000, cancellationToken);
+
+            await rover.SetAllLedOffAsync(cancellationToken);
         }
 
         private static async Task TestDevice(SensorDevice sensorDevice)
@@ -144,32 +183,6 @@ namespace sphero.Rvr.Console
                     System.Console.WriteLine($"{notification.GetType().Name} : [{notification.X} {notification.Y}]");
                 });
             }
-        }
-        private static async Task TestDevice(IoDevice io)
-        {
-            await io.SetAllLedsOffAsync(CancellationToken.None);
-
-            await Task.Delay(1000);
-
-            await io.SetLedsAsync(LedBitMask.HeadLightRight, Color.Colors[ColorNames.Orange].ToRawBytes(), CancellationToken.None);
-
-            await Task.Delay(1000);
-
-            await io.SetAllLedsAsync(Color.Colors[ColorNames.Blue], CancellationToken.None);
-
-            await Task.Delay(1000);
-
-            await io.SetAllLedsAsync(Color.Colors[ColorNames.Pink], CancellationToken.None);
-
-            await Task.Delay(1000);
-
-            await io.SetAllLedsAsync(Color.Colors[ColorNames.Green], CancellationToken.None);
-
-            await Task.Delay(1000);
-
-            await io.SetAllLedsAsync(Color.Colors[ColorNames.White], CancellationToken.None);
-
-            await Task.Delay(1000);
         }
 
         private static async Task TestDevice(SystemInfoDevice systemInfo)
