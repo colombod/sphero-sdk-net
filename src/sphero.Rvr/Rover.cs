@@ -38,10 +38,12 @@ namespace sphero.Rvr
         private readonly ISubject<RotationalSpeed3D>  _gyroscopeStream = new ReplaySubject<RotationalSpeed3D>(1);
         private readonly ISubject<Speed2D> _velocityStream = new ReplaySubject<Speed2D>(1);
         private readonly ISubject<Speed> _speedStream = new ReplaySubject<Speed>(1);
+        private readonly ISubject<Length2D> _locatorStream = new ReplaySubject<Length2D>(1);
         private readonly ISubject<uint>  _coreTimeLowerStream = new ReplaySubject<uint>(1);
         private readonly ISubject<uint> _coreTimeUpperStream = new ReplaySubject<uint>(1);
 
         private HashSet<SensorId> _activeSensors = new HashSet<SensorId>();
+       
 
         public Rover(string serialPort)
         {
@@ -69,6 +71,8 @@ namespace sphero.Rvr
         public IObservable<Speed2D> VelocityStream => _velocityStream;
 
         public IObservable<Speed> SpeedStream => _speedStream;
+
+        public IObservable<Length2D> LocatorStream => _locatorStream;
 
         public IObservable<uint> CoreTimeLowerStream => _coreTimeLowerStream;
 
@@ -145,6 +149,8 @@ namespace sphero.Rvr
                             _gyroscopeStream.OnNext(new RotationalSpeed3D(gyn.X, gyn.Y, gyn.Z))));
                         break;
                     case SensorId.Locator:
+                        _disposables.Add(_sensorDevice.SubscribeToStream((LocatorNotification ln) =>
+                            _locatorStream.OnNext(new Length2D(ln.X, ln.Y))));
                         break;
                     case SensorId.Velocity:
                         _disposables.Add(_sensorDevice.SubscribeToStream((VelocityNotification vn) =>
@@ -253,6 +259,8 @@ namespace sphero.Rvr
     public record Acceleration3D(Acceleration X, Acceleration Y, Acceleration Z);
 
     public record Speed2D(Speed X, Speed Y);
+
+    public record Length2D(Length X, Length Y);
 
     public record RotationalSpeed3D(RotationalSpeed X, RotationalSpeed Y, RotationalSpeed Z);
     public record ColorDetection(Color Color, float Confidence);

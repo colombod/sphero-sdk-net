@@ -75,7 +75,7 @@ namespace sphero.Rvr.Console
                 rover.SpeedStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.SpeedStream)}] => {notification}")),
         };
 
-            await Task.Delay(3000, cancellationToken);
+            await Task.Delay(5000, cancellationToken);
             subscriptions.Dispose();
         }
 
