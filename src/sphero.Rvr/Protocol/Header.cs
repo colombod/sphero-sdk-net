@@ -1,4 +1,6 @@
-﻿namespace sphero.Rvr.Protocol
+﻿using System;
+
+namespace sphero.Rvr.Protocol
 {
     public class Header
     {
@@ -21,5 +23,12 @@
 
         public byte TargetId { get; }
         public byte CommandId { get; }
+
+        public override string ToString()
+        {
+            var errorCodeMessage = ErrorCode.HasValue ? $"ErrorCode {Convert.ToString((byte)ErrorCode.Value,2)}" : string.Empty;
+
+            return $"CommandId {CommandId:X} TargetId {TargetId:X} SourceId {SourceId:X} DeviceId {DeviceId} ({((byte)DeviceId):X}) Sequence {Sequence} Flags { Convert.ToString(((byte)Flags),2)}{errorCodeMessage}";
+        }
     }
 }

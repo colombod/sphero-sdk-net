@@ -122,7 +122,7 @@ namespace sphero.Rvr
             var rawBytes = message.ToRawBytes();
             using (var operation = Logger.Log.OnEnterAndConfirmOnExit())
             {
-                operation.Info($"$[{ string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
+                operation.Info($"[{ string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
             }
             _serialPort.Write(rawBytes, 0, rawBytes.Length);
             return Task.CompletedTask;

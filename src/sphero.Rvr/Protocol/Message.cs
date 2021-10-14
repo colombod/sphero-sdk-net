@@ -195,5 +195,10 @@ namespace sphero.Rvr.Protocol
             }
             return unescapedRawBytes.ToArray();
         }
+
+        public override string ToString()
+        {
+            return $"Header [ {Header} ], Data : [{ string.Join(", ", Data.Select(b => b.ToString("X")))}]";
+        }
     }
 }
