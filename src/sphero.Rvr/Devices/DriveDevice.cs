@@ -1,10 +1,10 @@
-﻿using sphero.Rvr.Commands.DriveDevice;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using sphero.Rvr.Commands.DriveDevice;
 using GetMotorFaultState = sphero.Rvr.Responses.DriveDevice.GetMotorFaultState;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     public class DriveDevice
     {

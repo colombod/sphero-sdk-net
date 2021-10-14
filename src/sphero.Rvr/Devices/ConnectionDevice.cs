@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using sphero.Rvr.Commands.ConnectionDevice;
 using sphero.Rvr.Responses.ConnectionDevice;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     public class ConnectionDevice
     {

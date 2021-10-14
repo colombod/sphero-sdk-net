@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using sphero.Rvr.Commands.SensorDevice;
 using sphero.Rvr.Notifications.SensorDevice;
 using sphero.Rvr.Responses.SensorDevice;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     public class SensorDevice
     {
@@ -195,6 +195,11 @@ namespace sphero.Rvr
         {
             var configurationMessages =  _streamingService.Configure(sensors);
 
+            if (sensors.Contains(SensorId.ColorDetection))
+            {
+                await EnableColorDetectionAsync(true, cancellationToken);
+            }
+
             foreach (var configureStreamingService in configurationMessages)
             {
                 await _driver.SendAsync(configureStreamingService.ToMessage(), cancellationToken);
@@ -206,7 +211,6 @@ namespace sphero.Rvr
             return _notificationManager.Subscribe(onNotification);
         }
 
-       
         public IDisposable SubscribeToStream(Action<AccelerometerNotification> onNotification)
         {
             return _streamingService.Subscribe(onNotification);

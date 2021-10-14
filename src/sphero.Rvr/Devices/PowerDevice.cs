@@ -5,7 +5,7 @@ using sphero.Rvr.Commands.PowerDevice;
 using sphero.Rvr.Notifications.PowerDevice;
 using sphero.Rvr.Responses.PowerDevice;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     public class PowerDevice : IDisposable
     {

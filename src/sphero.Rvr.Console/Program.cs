@@ -3,6 +3,7 @@ using sphero.Rvr;
 
 using System.Threading;
 using System.Threading.Tasks;
+using sphero.Rvr.Devices;
 using sphero.Rvr.Notifications.SensorDevice;
 using sphero.Rvr.Responses.SensorDevice;
 
@@ -45,12 +46,12 @@ namespace sphero.Rvr.Console
             var ambientLightSensorValue = await sensorDevice.GetAmbientLightSensorValueAsync(CancellationToken.None);
             System.Console.WriteLine(ambientLightSensorValue.Value);
 
+            // await sensorDevice.EnableColorDetectionAsync(true, CancellationToken.None);
+
             //sensorDevice.SubscribeToColorDetectionNotifications(notification =>
             //{
             //    System.Console.WriteLine($"{notification.GetType().Name} : {notification.Color}, ClassificationId {notification.ColorClassificationId}, Confidence {notification.Confidence:F2}");
             //});
-
-            await sensorDevice.EnableColorDetectionAsync(true, CancellationToken.None);
 
             //await sensorDevice.EnableColorDetectionNotificationsAsync(true, TimeSpan.FromSeconds(1), 0,  CancellationToken.None);
 
@@ -76,7 +77,6 @@ namespace sphero.Rvr.Console
             SubscribeToStStreams();
 
             SubscribeToNordicStreams();
-
 
             await Task.Delay(TimeSpan.FromSeconds(100));
 

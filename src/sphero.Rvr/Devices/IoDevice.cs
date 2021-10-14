@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using sphero.Rvr.Commands.IoDevice;
 using sphero.Rvr.Responses.IoDevice;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     public class IoDevice
     {

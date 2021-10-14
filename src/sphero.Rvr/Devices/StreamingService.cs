@@ -8,7 +8,7 @@ using sphero.Rvr.Notifications;
 using sphero.Rvr.Notifications.SensorDevice;
 using sphero.Rvr.Protocol;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     internal class StreamingService
     {

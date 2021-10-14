@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using sphero.Rvr.Commands.SystemInfoDevice;
 using sphero.Rvr.Responses.SystemInfoDevice;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     public class SystemInfoDevice
     {

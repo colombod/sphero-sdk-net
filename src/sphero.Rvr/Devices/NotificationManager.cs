@@ -6,7 +6,7 @@ using System.Reactive.Subjects;
 using sphero.Rvr.Notifications;
 using sphero.Rvr.Protocol;
 
-namespace sphero.Rvr
+namespace sphero.Rvr.Devices
 {
     internal class NotificationManager : IDisposable
     {
