@@ -3,10 +3,13 @@ using System;
 using System.Buffers;
 using System.IO.Pipelines;
 using System.IO.Ports;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using Pocket;
+using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr
 {
@@ -21,7 +24,7 @@ namespace sphero.Rvr
         {
             _serialPort = new SerialPort(serialPort, 115200);
             _serialPort.Open();
-            _serialPort.DataReceived += _serialPort_DataReceived;
+            _serialPort.DataReceived += SerialPortDataReceived;
             _pipe = new Pipe();
             var cs = new CancellationTokenSource();
             Task.Run(() =>
@@ -34,7 +37,7 @@ namespace sphero.Rvr
                 cs.Cancel();
                 cs.Dispose();
                 _messageChannel.OnCompleted();
-                _serialPort.DataReceived -= _serialPort_DataReceived;
+                _serialPort.DataReceived -= SerialPortDataReceived;
                 _serialPort.Close();
                 _serialPort.Dispose();
                 _pipe.Writer.Complete();
@@ -42,12 +45,17 @@ namespace sphero.Rvr
             }));
         }
 
-        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(_serialPort.BytesToRead);
 
             var read = _serialPort.Read(buffer, 0, _serialPort.BytesToRead);
-            //Console.WriteLine($"Received [{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
+
+            using (var operation = Logger.Log.OnEnterAndConfirmOnExit())
+            {
+                operation.Info($"[{string.Join(", ", buffer[..read].Select(b => b.ToString("X")))}]");
+            }
+
             _pipe.Writer.Write(buffer[..read]);
             _pipe.Writer.FlushAsync().GetAwaiter().OnCompleted(() =>
             {
@@ -112,7 +120,10 @@ namespace sphero.Rvr
             }
 
             var rawBytes = message.ToRawBytes();
-            //Console.WriteLine($"Sending [{string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
+            using (var operation = Logger.Log.OnEnterAndConfirmOnExit())
+            {
+                operation.Info($"$[{ string.Join(", ", rawBytes.Select(b => b.ToString("X")))}]");
+            }
             _serialPort.Write(rawBytes, 0, rawBytes.Length);
             return Task.CompletedTask;
         }
