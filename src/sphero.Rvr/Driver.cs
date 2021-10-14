@@ -4,12 +4,12 @@ using System.Buffers;
 using System.IO.Pipelines;
 using System.IO.Ports;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Pocket;
-using sphero.Rvr.Protocol;
+using CompositeDisposable = System.Reactive.Disposables.CompositeDisposable;
+using Disposable = System.Reactive.Disposables.Disposable;
 
 namespace sphero.Rvr
 {
