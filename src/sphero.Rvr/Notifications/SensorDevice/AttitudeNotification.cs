@@ -27,6 +27,6 @@ namespace sphero.Rvr.Notifications.SensorDevice
 
         public Angle Pitch { get; private set; }
         public Angle Roll { get; private set; }
-        public Angle Yaw { get; private set; }
+        public Angle Yaw  { get; private set; }
     }
 }
