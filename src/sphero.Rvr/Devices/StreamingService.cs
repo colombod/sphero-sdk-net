@@ -7,6 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Pocket;
+using sphero.Rvr.Commands.SensorDevice;
+using sphero.Rvr.Notifications;
+using sphero.Rvr.Notifications.SensorDevice;
+using sphero.Rvr.Protocol;
 
 namespace sphero.Rvr.Devices
 {
@@ -28,98 +33,104 @@ namespace sphero.Rvr.Devices
 
         private void OnStreamingData(StreamingServiceDataNotification streamingServiceDataNotification)
         {
-            if (_processorToSlots.TryGetValue(streamingServiceDataNotification.SourceId, out var processorSlots))
+            using (var operation = Logger.Log.OnEnterAndExit())
             {
-                if (processorSlots.TryGetValue(streamingServiceDataNotification.Token, out var slot))
+                if (_processorToSlots.TryGetValue(streamingServiceDataNotification.SourceId, out var processorSlots))
                 {
-                    // unpack
-                    var position = 0;
-                    foreach (var (sensorId, _) in slot.Sensors)
+                    if (processorSlots.TryGetValue(streamingServiceDataNotification.Token, out var slot))
                     {
-                        Subject<Event> channel;
-                        Event notification;
-                        switch (sensorId)
+                        // unpack
+                        var position = 0;
+                        foreach (var (sensorId, _) in slot.Sensors)
                         {
-                            case SensorId.Quaternion:
-                                channel = _channels[sensorId];
-                                var qn = new QuaternionNotification();
-                                position += qn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = qn;
-                                break;
-                            case SensorId.Attitude:
-                                channel = _channels[sensorId];
-                                var an = new AttitudeNotification();
-                                position += an.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = an;
-                                break;
-                            case SensorId.Accelerometer:
-                                channel = _channels[sensorId];
-                                var axn = new AccelerometerNotification();
-                                position += axn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = axn;
-                                break;
-                            case SensorId.ColorDetection:
-                                channel = _channels[sensorId];
-                                var cdn = new ColorDetectionNotification();
-                                position += cdn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = cdn;
-                                break;
-                            case SensorId.Gyroscope:
-                                channel = _channels[sensorId];
-                                var gn = new GyroscopeNotification();
-                                position += gn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = gn;
-                                break;
-                            case SensorId.Locator:
-                                channel = _channels[sensorId];
-                                var ln = new LocatorNotification();
-                                position += ln.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = ln;
-                                break;
-                            case SensorId.Velocity:
-                                channel = _channels[sensorId];
-                                var vn = new VelocityNotification();
-                                position += vn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = vn;
-                                break;
-                            case SensorId.Speed:
-                                channel = _channels[sensorId];
-                                var sn = new SpeedNotification();
-                                position += sn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = sn;
-                                break;
-                            case SensorId.CoreTimeLower:
-                                channel = _channels[sensorId];
-                                var ctln = new CoreTimeLowerNotification();
-                                position += ctln.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = ctln;
-                                break;
-                            case SensorId.CoreTimeUpper:
-                                channel = _channels[sensorId];
-                                var ctun = new CoreTimeUpperNotification();
-                                position += ctun.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = ctun;
-                                break;
-                            case SensorId.AmbientLight:
-                                channel = _channels[sensorId];
-                                var aln = new AmbientLightNotification();
-                                position += aln.FromRawData(streamingServiceDataNotification.SensorData, position);
-                                notification = aln;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
+                            Subject<Event> channel;
+                            Event notification;
+                            switch (sensorId)
+                            {
+                                case SensorId.Quaternion:
+                                    channel = _channels[sensorId];
+                                    var qn = new QuaternionNotification();
+                                    position += qn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = qn;
+                                    break;
+                                case SensorId.Attitude:
+                                    channel = _channels[sensorId];
+                                    var an = new AttitudeNotification();
+                                    position += an.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = an;
+                                    break;
+                                case SensorId.Accelerometer:
+                                    channel = _channels[sensorId];
+                                    var axn = new AccelerometerNotification();
+                                    position += axn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = axn;
+                                    break;
+                                case SensorId.ColorDetection:
+                                    channel = _channels[sensorId];
+                                    var cdn = new ColorDetectionNotification();
+                                    position += cdn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = cdn;
+                                    break;
+                                case SensorId.Gyroscope:
+                                    channel = _channels[sensorId];
+                                    var gn = new GyroscopeNotification();
+                                    position += gn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = gn;
+                                    break;
+                                case SensorId.Locator:
+                                    channel = _channels[sensorId];
+                                    var ln = new LocatorNotification();
+                                    position += ln.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = ln;
+                                    break;
+                                case SensorId.Velocity:
+                                    channel = _channels[sensorId];
+                                    var vn = new VelocityNotification();
+                                    position += vn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = vn;
+                                    break;
+                                case SensorId.Speed:
+                                    channel = _channels[sensorId];
+                                    var sn = new SpeedNotification();
+                                    position += sn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = sn;
+                                    break;
+                                case SensorId.CoreTimeLower:
+                                    channel = _channels[sensorId];
+                                    var ctln = new CoreTimeLowerNotification();
+                                    position += ctln.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = ctln;
+                                    break;
+                                case SensorId.CoreTimeUpper:
+                                    channel = _channels[sensorId];
+                                    var ctun = new CoreTimeUpperNotification();
+                                    position += ctun.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = ctun;
+                                    break;
+                                case SensorId.AmbientLight:
+                                    channel = _channels[sensorId];
+                                    var aln = new AmbientLightNotification();
+                                    position += aln.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                    notification = aln;
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+
+                            channel.OnNext(notification);
                         }
-                        channel.OnNext(notification);
+                    }
+                    else
+                    {
+                        operation.Warning(
+                            $"Cannot find slot {streamingServiceDataNotification.Token} for processor {streamingServiceDataNotification.SourceId} in current configuration.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"Cannot find slot {streamingServiceDataNotification.Token} for processor {streamingServiceDataNotification.SourceId} in current configuration.");
+                    operation.Warning(
+                        $"Cannot find processor {streamingServiceDataNotification.SourceId} in current configuration.");
                 }
-            }
-            else
-            {
-                Console.WriteLine($"Cannot find processor {streamingServiceDataNotification.SourceId} in current configuration.");
             }
         }
 
