@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Subjects;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnitsNet;
@@ -272,7 +273,18 @@ namespace sphero.Rvr
 
     public record ProcessorInfo(string Name, Version FirmwareVersion);
 
-    public record SystemInfo(byte BoardRevision, ProcessorInfo[] Processors);
+    public record SystemInfo(byte BoardRevision, ProcessorInfo[] Processors)
+    {
+        protected virtual bool PrintMembers(StringBuilder builder)
+        {
+            builder.Append($"{nameof(BoardRevision)} = {BoardRevision}");
+            if (Processors?.Length > 0)
+            {
+                builder.AppendJoin(", ", Processors.Select(p => p.ToString()));
+            }
+            return true;
+        }
+    }
 
     public record Attitude(Angle Pitch, Angle Roll, Angle Yaw);
 
