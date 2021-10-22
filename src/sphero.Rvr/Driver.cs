@@ -2,7 +2,6 @@
 using sphero.Rvr.Protocol;
 using System;
 using System.Buffers;
-using System.Diagnostics;
 using System.IO.Pipelines;
 using System.IO.Ports;
 using System.Linq;
@@ -14,7 +13,7 @@ using Disposable = System.Reactive.Disposables.Disposable;
 
 namespace sphero.Rvr
 {
-    public class Driver : IDisposable, IDriver
+    public class Driver : IDriver
     {
         private readonly SerialPort _serialPort;
         private readonly Pipe _pipe;
@@ -66,45 +65,10 @@ namespace sphero.Rvr
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (_pipe.Reader.TryRead(out var readerResult))
+                var messages = _pipe.Reader.ReadMessages();
+                foreach (var message in messages.TakeWhile(_ => !cancellationToken.IsCancellationRequested))
                 {
-                    var start = readerResult.Buffer.PositionOf(Message.StartOfPacket);
-                    if (start is not null)
-                    {
-                        var end = readerResult.Buffer.PositionOf(Message.EndOfPacket);
-                        if (end is not null)
-                        {
-                            var endIncluded = new SequencePosition(end.Value.GetObject(), end.Value.GetInteger() + 1);
-                            var rawBytes = readerResult.Buffer.Slice(start.Value, endIncluded).ToArray();
-
-                            if (rawBytes.Length == 0)
-                            {
-                                Debugger.Break();
-                            }
-                            var message = Message.FromRawBytes(rawBytes);
-                            _pipe.Reader.AdvanceTo(endIncluded);
-                            _pipe.Reader.CancelPendingRead();
-                            _messageChannel.OnNext(message);
-                            continue;
-
-                        }
-                        else // no end found
-                        {
-                            _pipe.Reader.CancelPendingRead();
-                            continue;
-                        }
-                    }
-                    else // no start found
-                    {
-                        _pipe.Reader.CancelPendingRead();
-                        continue;
-                    }
-                }
-                else
-                {
-                    // bug, should not need to call this
-                    _pipe.Reader.CancelPendingRead();
-                    continue;
+                    _messageChannel.OnNext(message);
                 }
             }
         }
@@ -128,8 +92,5 @@ namespace sphero.Rvr
         }
 
         public IDisposable Subscribe(IObserver<Message> observer) => _messageChannel.Subscribe(observer);
-
-
     }
-
 }

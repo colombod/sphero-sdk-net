@@ -4,13 +4,12 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipelines;
-using System.Threading.Tasks;
 
 namespace sphero.Rvr
 {
     public static class MessageReaderExtensions
     {
-        public static async Task<IEnumerable<Message>> ReadMessages(this PipeReader reader)
+        public static IEnumerable<Message> ReadMessages(this PipeReader reader)
         {
             var messages = new List<Message>();
             while (reader.TryRead(out var readResult))

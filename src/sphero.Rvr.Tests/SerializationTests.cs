@@ -126,7 +126,7 @@ namespace sphero.Rvr.Tests
         }
 
         [Fact]
-        public async Task awesome_deserializer_should_be_able_to_handle_big_real_life_data()
+        public void awesome_deserializer_should_be_able_to_handle_big_real_life_data()
         {
             var stream = typeof(SerializationTests).Assembly.GetManifestResourceStream("sphero.Rvr.Tests.bufferData.bin");
             var pipe = new Pipe();
@@ -134,9 +134,9 @@ namespace sphero.Rvr.Tests
 
             stream.CopyTo(pipe.Writer.AsStream());
 
-            var receivedMessages = await pipe.Reader.ReadMessages();
+            var receivedMessages = pipe.Reader.ReadMessages();
 
-            receivedMessages.Count().Should().Be(5);
+            receivedMessages.Count().Should().Be(205);
         }
     }
 }
