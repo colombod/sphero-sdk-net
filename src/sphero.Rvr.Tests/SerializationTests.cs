@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
-using sphero.Rvr;
 using sphero.Rvr.Protocol;
-
+using System.IO.Pipelines;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace sphero.Rvr.Tests
@@ -122,6 +123,20 @@ namespace sphero.Rvr.Tests
             var message = Message.FromRawBytes(rawBytes);
 
             message.Should().BeEquivalentTo(expectedMessage);
+        }
+
+        [Fact]
+        public async Task awesome_deserializer_should_be_able_to_handle_big_real_life_data()
+        {
+            var stream = typeof(SerializationTests).Assembly.GetManifestResourceStream("sphero.Rvr.Tests.bufferData.bin");
+            var pipe = new Pipe();
+
+
+            stream.CopyTo(pipe.Writer.AsStream());
+
+            var receivedMessages = await pipe.Reader.ReadMessages();
+
+            receivedMessages.Count().Should().Be(5);
         }
     }
 }
