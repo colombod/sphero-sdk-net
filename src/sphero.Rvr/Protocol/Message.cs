@@ -109,50 +109,46 @@ namespace sphero.Rvr.Protocol
                 throw new InvalidOperationException("Expected End of Packet.");
             }
 
-            var unescabedytes = UnEscape(rawBytes[1..^1]);
+            var unescapedBytes = UnEscape(rawBytes[1..^1]);
 
-            var runningChecksum = unescabedytes[..^1].Aggregate(0, (a, v) => v + a);
-            runningChecksum = ~(runningChecksum % 256);
-            if (runningChecksum < 0)
+            var calculatedChecksum = ~unescapedBytes[..^1].Aggregate(0, (a, v) => v + a) & 0xff;
+
+            byte checksumFromMessage = unescapedBytes[^1];
+            if (calculatedChecksum != checksumFromMessage)
             {
-                runningChecksum = 256 + runningChecksum;
+                throw new InvalidOperationException($"Checksum {checksumFromMessage} not matching {calculatedChecksum}.");
             }
 
-            if (runningChecksum != unescabedytes[^1])
-            {
-                throw new InvalidOperationException($"Checksum {unescabedytes[^1]} not matching {runningChecksum}.");
-            }
-
-            var flags = GetFlags(unescabedytes);
+            var flags = GetFlags(unescapedBytes);
             var pos = 1;
             byte target = 0x0;
             byte source = 0x0;
             ErrorCode? errorCode = null;
             if ((flags & Flags.PacketHasTargetId) > 0)
             {
-                target = unescabedytes[pos];
+                target = unescapedBytes[pos];
                 pos++;
             }
 
             if ((flags & Flags.PacketHasSourceId) > 0)
             {
-                source = unescabedytes[pos];
+                source = unescapedBytes[pos];
                 pos++;
             }
 
-            var deviceId = (DeviceIdentifier)unescabedytes[pos++];
-            var commandId = unescabedytes[pos++];
-            var sequence = unescabedytes[pos++];
+            var deviceId = (DeviceIdentifier)unescapedBytes[pos++];
+            var commandId = unescapedBytes[pos++];
+            var sequence = unescapedBytes[pos++];
 
             if ((flags & Flags.IsResponse) > 0)
             {
-                errorCode = (ErrorCode)unescabedytes[pos];
+                errorCode = (ErrorCode)unescapedBytes[pos];
                 pos++;
             }
 
             var header = new Header(commandId, target, source, deviceId, sequence, flags, errorCode);
 
-            var data = unescabedytes[pos..^1];
+            var data = unescapedBytes[pos..^1];
 
             return new Message(header, data);
         }
