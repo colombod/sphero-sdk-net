@@ -1,5 +1,4 @@
 ﻿using sphero.Rvr.Devices;
-using sphero.Rvr.Notifications.SensorDevice;
 
 using System;
 using System.Reactive.Disposables;
@@ -16,11 +15,7 @@ namespace sphero.Rvr.Console
 
             var rover = new Rover(port);
 
-            await rover.WakeAsync(CancellationToken.None);
-
-            var systemInfo = await rover.GetInfoAsync(CancellationToken.None);
-
-            System.Console.WriteLine(systemInfo);
+            var systemInfo = await rover.WakeAsync(CancellationToken.None);
 
             await rover.ConfigureRoverAsync(CancellationToken.None);
 

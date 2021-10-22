@@ -245,9 +245,11 @@ namespace sphero.Rvr
             _logSubscription?.Dispose();
         }
 
-        public Task WakeAsync(CancellationToken cancellationToken)
+        public async Task<SystemInfo> WakeAsync(CancellationToken cancellationToken)
         {
-            return _powerDevice.WakeAsync(cancellationToken);
+            await _powerDevice.WakeAsync(cancellationToken);
+
+            return await GetInfoAsync(cancellationToken);
         }
 
         public Task SleepAsync(CancellationToken cancellationToken)
@@ -264,7 +266,7 @@ namespace sphero.Rvr
             var p2Name = await _systemInfoDevice.GetProcessorNameAsync(1, cancellationToken);
             var p2FwVersion = await _systemInfoDevice.GetFirmwareVersionForSTProcessorAsync(cancellationToken);
 
-            return new SystemInfo(boardRevision.Revision, new ProcessorInfo[]{new(p1Name.Name, p1FwVersion.Version), new(p2Name.Name, p2FwVersion.Version)});
+            return new SystemInfo(boardRevision.Revision, new ProcessorInfo[] { new(p1Name.Name, p1FwVersion.Version), new(p2Name.Name, p2FwVersion.Version) });
         }
     }
 
