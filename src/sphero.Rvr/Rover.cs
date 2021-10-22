@@ -254,7 +254,23 @@ namespace sphero.Rvr
         {
             return _powerDevice.SleepAsync(cancellationToken);
         }
+
+        public async Task<SystemInfo> GetInfoAsync(CancellationToken cancellationToken)
+        {
+            var boardRevision = await _systemInfoDevice.GetBoardRevisionAsync(cancellationToken);
+            var p1Name = await _systemInfoDevice.GetProcessorNameAsync(1, cancellationToken);
+            var p1FwVersion = await _systemInfoDevice.GetFirmwareVersionForNordicProcessorAsync(cancellationToken);
+
+            var p2Name = await _systemInfoDevice.GetProcessorNameAsync(1, cancellationToken);
+            var p2FwVersion = await _systemInfoDevice.GetFirmwareVersionForSTProcessorAsync(cancellationToken);
+
+            return new SystemInfo(boardRevision.Revision, new ProcessorInfo[]{new(p1Name.Name, p1FwVersion.Version), new(p2Name.Name, p2FwVersion.Version)});
+        }
     }
+
+    public record ProcessorInfo(string Name, Version FirmwareVersion);
+
+    public record SystemInfo(byte BoardRevision, ProcessorInfo[] Processors);
 
     public record Attitude(Angle Pitch, Angle Roll, Angle Yaw);
 

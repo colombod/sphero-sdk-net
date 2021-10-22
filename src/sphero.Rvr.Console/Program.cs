@@ -17,6 +17,11 @@ namespace sphero.Rvr.Console
             var rover = new Rover(port);
 
             await rover.WakeAsync(CancellationToken.None);
+
+            var systemInfo = await rover.GetInfoAsync(CancellationToken.None);
+
+            System.Console.WriteLine(systemInfo);
+
             await rover.ConfigureRoverAsync(CancellationToken.None);
 
             System.Console.WriteLine(nameof(TestLeds));
