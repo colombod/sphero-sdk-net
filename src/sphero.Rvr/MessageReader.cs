@@ -26,24 +26,26 @@ namespace sphero.Rvr
                 {
                     if (end is not null)
                     {
-                        if (readResult.Buffer.GetOffset(start.Value) > readResult.Buffer.GetOffset(end.Value))
+                       
+                        if (readResult.Buffer.GetOffset(start.Value) >= readResult.Buffer.GetOffset(end.Value))
                         {
                             reader.AdvanceTo(start.Value);
                             continue;
                         }
 
-                        // todo - there should be a bug here, if the EOP is at the end of a BufferSegment. I think
-                        // this should fix it, but it doesn't work as expected at all:
-                        // var endIncluded = readResult.Buffer.GetPosition(readResult.Buffer.GetOffset(end.Value) + 1);
-                        var endIncluded = new SequencePosition(end.Value.GetObject(), end.Value.GetInteger() + 1);
-                        var rawBytes = readResult.Buffer.Slice(start.Value, endIncluded).ToArray();
+                        var dataSize = readResult.Buffer.GetOffset(end.Value) -
+                                       readResult.Buffer.GetOffset(start.Value) + 1;
+                        var rawBytes = readResult.Buffer.Slice(start.Value, dataSize).ToArray();
+
+                         var consumedDataPosition = readResult.Buffer.GetPosition(dataSize);
 
                         if (rawBytes.Length == 0)
                         {
                             Debugger.Break();
                         }
+
                         var message = Message.FromRawBytes(rawBytes);
-                        reader.AdvanceTo(endIncluded);
+                        reader.AdvanceTo(consumedDataPosition);
                         messages.Add(message);
                         continue;
 
