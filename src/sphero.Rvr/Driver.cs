@@ -92,10 +92,9 @@ namespace sphero.Rvr
                                 _pipe.Reader.AdvanceTo(start.Value);
                                 continue;
                             }
-                            var dataSize = readResult.Buffer.GetOffset(end.Value) -
-                                readResult.Buffer.GetOffset(start.Value) + 1;
+                            var dataSize = (readResult.Buffer.GetOffset(end.Value) - readResult.Buffer.GetOffset(start.Value)) + 1;
                             var rawBytes = readResult.Buffer.Slice(start.Value, dataSize).ToArray();
-                            var consumedDataPosition = readResult.Buffer.GetPosition(dataSize);
+                            var consumedDataPosition = readResult.Buffer.GetPosition(rawBytes.Length, start.Value);
                             var message = Message.FromRawBytes(rawBytes);
                             _pipe.Reader.AdvanceTo(consumedDataPosition);
                             _messageChannel.OnNext(message);
