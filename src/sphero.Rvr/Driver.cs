@@ -27,10 +27,24 @@ namespace sphero.Rvr
             _serialPort.DataReceived += SerialPortDataReceived;
             _pipe = new Pipe();
             var cs = new CancellationTokenSource();
-            Task.Run(() =>
+            Task.Factory.StartNew(() =>
             {
-                ReadMessages(cs.Token);
-            }, cs.Token);
+                while (!cs.IsCancellationRequested)
+                {
+                    var messages = _pipe.Reader.ReadMessages().ToList();
+                    if (messages.Count > 0)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            foreach (var message in messages)
+                            {
+                                _messageChannel.OnNext(message);
+                            }
+                        });
+                    }
+                }
+                //ReadMessages(cs.Token);
+            }, cs.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             _disposables.Add(Disposable.Create(() =>
             {

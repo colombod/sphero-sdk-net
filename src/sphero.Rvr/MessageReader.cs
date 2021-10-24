@@ -1,5 +1,4 @@
 ﻿using sphero.Rvr.Protocol;
-using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,19 +46,17 @@ namespace sphero.Rvr
                         var message = Message.FromRawBytes(rawBytes);
                         reader.AdvanceTo(consumedDataPosition);
                         messages.Add(message);
-                        continue;
-
                     }
                     else // no end found
                     {
                         reader.CancelPendingRead();
-                        continue;
+                        break;
                     }
                 }
                 else // no start found
                 {
                     reader.CancelPendingRead();
-                    continue;
+                    break;
                 }
             }
             return messages;
