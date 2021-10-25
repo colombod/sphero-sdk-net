@@ -43,7 +43,6 @@ namespace sphero.Rvr
                         });
                     }
                 }
-                //ReadMessages(cs.Token);
             }, cs.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
             _disposables.Add(Disposable.Create(() =>
@@ -73,53 +72,6 @@ namespace sphero.Rvr
             {
                 ArrayPool<byte>.Shared.Return(buffer);
             });
-        }
-
-        private void ReadMessages(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                if (_pipe.Reader.TryRead(out var readResult))
-                {
-                    var start = readResult.Buffer.PositionOf(Message.StartOfPacket);
-                    if (start is not null)
-                    {
-                        var end = readResult.Buffer.PositionOf(Message.EndOfPacket);
-                        if (end is not null)
-                        {
-                            if (readResult.Buffer.GetOffset(start.Value) > readResult.Buffer.GetOffset(end.Value))
-                            {
-                                _pipe.Reader.AdvanceTo(start.Value);
-                                continue;
-                            }
-                            var dataSize = (readResult.Buffer.GetOffset(end.Value) - readResult.Buffer.GetOffset(start.Value)) + 1;
-                            var rawBytes = readResult.Buffer.Slice(start.Value, dataSize).ToArray();
-                            var consumedDataPosition = readResult.Buffer.GetPosition(rawBytes.Length, start.Value);
-                            var message = Message.FromRawBytes(rawBytes);
-                            _pipe.Reader.AdvanceTo(consumedDataPosition);
-                            _messageChannel.OnNext(message);
-                            continue;
-
-                        }
-                        else // no end found
-                        {
-                            _pipe.Reader.CancelPendingRead();
-                            continue;
-                        }
-                    }
-                    else // no start found
-                    {
-                        _pipe.Reader.CancelPendingRead();
-                        continue;
-                    }
-                }
-                else
-                {
-                    // bug, should not need to call this
-                    _pipe.Reader.CancelPendingRead();
-                    continue;
-                }
-            }
         }
 
         public void Dispose()

@@ -35,11 +35,6 @@ namespace sphero.Rvr
                         var dataSize = (readResult.Buffer.GetOffset(end.Value) - readResult.Buffer.GetOffset(start.Value)) + 1;
                         var rawBytes = readResult.Buffer.Slice(start.Value, dataSize).ToArray();
 
-                        if (rawBytes.Length == 0)
-                        {
-                            Debugger.Break();
-                        }
-
                         var consumedDataPosition = readResult.Buffer.GetPosition(rawBytes.Length, start.Value);
                         var message = Message.FromRawBytes(rawBytes);
                         reader.AdvanceTo(consumedDataPosition);

@@ -249,7 +249,6 @@ namespace sphero.Rvr
         public async Task<SystemInfo> WakeAsync(CancellationToken cancellationToken)
         {
             await _powerDevice.WakeAsync(cancellationToken);
-
             return await GetInfoAsync(cancellationToken);
         }
 
