@@ -25,7 +25,7 @@ namespace sphero.Rvr
                 {
                     if (end is not null)
                     {
-                       
+
                         if (readResult.Buffer.GetOffset(start.Value) >= readResult.Buffer.GetOffset(end.Value))
                         {
                             reader.AdvanceTo(start.Value);
@@ -34,7 +34,7 @@ namespace sphero.Rvr
 
                         var dataSize = (readResult.Buffer.GetOffset(end.Value) - readResult.Buffer.GetOffset(start.Value)) + 1;
                         var rawBytes = readResult.Buffer.Slice(start.Value, dataSize).ToArray();
-                        
+
                         if (rawBytes.Length == 0)
                         {
                             Debugger.Break();
@@ -47,14 +47,14 @@ namespace sphero.Rvr
                     }
                     else // no end found
                     {
+                        reader.AdvanceTo(readResult.Buffer.Start);
                         reader.CancelPendingRead();
-                        break;
                     }
                 }
                 else // no start found
                 {
+                    reader.AdvanceTo(readResult.Buffer.Start);
                     reader.CancelPendingRead();
-                    break;
                 }
             }
             return messages;

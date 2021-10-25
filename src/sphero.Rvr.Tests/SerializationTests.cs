@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using sphero.Rvr.Protocol;
+using System;
 using System.IO.Pipelines;
 using System.Linq;
 using System.Threading.Tasks;
@@ -137,6 +138,93 @@ namespace sphero.Rvr.Tests
             var receivedMessages = pipe.Reader.ReadMessages();
 
             receivedMessages.Count().Should().Be(205);
+        }
+
+        [Fact]
+        public async Task messages_can_be_read_in_chunks()
+        {
+            var msgBytes = new byte[] {
+                0x8D, // SOP
+                0x39, // Flags
+                0x21, // Target 2 1
+                0x01, // Source
+                0x11, // Device
+                0x00, // Command
+                0x00, // Sequence
+                0x00, // ErrorCode
+                0x00, // Data
+                0x08, // Data
+                0x00, // Data
+                0x03, // Data
+                0x01, // Data
+                0xB0, // Data
+                0xD7, // Checksum
+                0xD8  // EOP
+            };
+            var half = msgBytes.Length / 2;
+
+            var pipe = new Pipe();
+            await pipe.Writer.WriteAsync(msgBytes.AsMemory().Slice(0, half));
+
+            var receivedMessages = pipe.Reader.ReadMessages();
+            receivedMessages.Count().Should().Be(0);
+
+            await pipe.Writer.WriteAsync(msgBytes.AsMemory().Slice(half));
+
+            receivedMessages = pipe.Reader.ReadMessages();
+            receivedMessages.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public async Task junk_at_start_is_ignored()
+        {
+            var junk = Enumerable.Repeat<byte>(0, 5000).ToArray();
+            var msgBytes = new byte[] {
+                0x01,
+                0x02,
+                0x03,
+                0x05,
+                0x8D, // SOP
+                0x39, // Flags
+                0x21, // Target 2 1
+                0x01, // Source
+                0x11, // Device
+                0x00, // Command
+                0x00, // Sequence
+                0x00, // ErrorCode
+                0x00, // Data
+                0x08, // Data
+                0x00, // Data
+                0x03, // Data
+                0x01, // Data
+                0xB0, // Data
+                0xD7, // Checksum
+                0xD8  // EOP
+            };
+
+            var pipe = new Pipe();
+            await pipe.Writer.WriteAsync(junk);
+
+            pipe.Reader.ReadMessages().Count().Should().Be(0);
+
+            await pipe.Writer.WriteAsync(msgBytes);
+
+            var receivedMessages = pipe.Reader.ReadMessages();
+            receivedMessages.Count().Should().Be(1);
+
+            var half = msgBytes.Length / 2;
+
+            var msgWithJunkWithEOP = msgBytes[half..].Concat(msgBytes[half..]).Concat(msgBytes).ToArray();
+            await pipe.Writer.WriteAsync(msgWithJunkWithEOP);
+
+            receivedMessages = pipe.Reader.ReadMessages();
+            receivedMessages.Count().Should().Be(1);
+
+            var twoMessagesWithJunkInBetween = msgBytes.Concat(junk).Concat(msgBytes).ToArray();
+            await pipe.Writer.WriteAsync(twoMessagesWithJunkInBetween);
+
+            receivedMessages = pipe.Reader.ReadMessages();
+            receivedMessages.Count().Should().Be(2);
         }
     }
 }
