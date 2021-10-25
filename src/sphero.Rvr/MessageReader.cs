@@ -43,13 +43,13 @@ namespace sphero.Rvr
                     else // no end found
                     {
                         reader.AdvanceTo(readResult.Buffer.Start);
-                        reader.CancelPendingRead();
+                        break;
                     }
                 }
                 else // no start found
                 {
                     reader.AdvanceTo(readResult.Buffer.Start);
-                    reader.CancelPendingRead();
+                    break;
                 }
             }
             return messages;

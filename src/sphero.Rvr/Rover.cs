@@ -268,6 +268,16 @@ namespace sphero.Rvr
 
             return new SystemInfo(boardRevision.Revision, new ProcessorInfo[] { new(p1Name.Name, p1FwVersion.Version), new(p2Name.Name, p2FwVersion.Version) });
         }
+
+        public Task DriveAsync(byte speed, Angle heading, CancellationToken cancellationToken)
+        {
+            return _driveDevice.DriveWithHeadingAsync(speed, heading,DriveFlags.NoFlags, cancellationToken);
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return _driveDevice.DriveWithHeadingAsync(0, Angle.Zero, DriveFlags.NoFlags, cancellationToken);
+        }
     }
 
     public record ProcessorInfo(string Name, Version FirmwareVersion);

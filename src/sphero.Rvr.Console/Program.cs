@@ -4,6 +4,7 @@ using System;
 using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
+using UnitsNet;
 
 namespace sphero.Rvr.Console
 {
@@ -56,6 +57,7 @@ namespace sphero.Rvr.Console
 
         private static async Task TestSensorSubscriptions(Rover rover, CancellationToken cancellationToken)
         {
+          
             var subscriptions = new CompositeDisposable
             {
                 rover.AccelerationStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.AccelerationStream)}] => {notification}")),
@@ -72,10 +74,17 @@ namespace sphero.Rvr.Console
 
                 rover.VelocityStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.VelocityStream)}] => {notification}")),
 
-                rover.SpeedStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.SpeedStream)}] => {notification}")),
-            };
+                rover.LocatorStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.LocatorStream)}] => {notification}")),
 
-            await Task.Delay(10000, cancellationToken);
+                rover.SpeedStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.SpeedStream)}] => {notification}")),
+
+                rover.CoreTimeLowerStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.CoreTimeLowerStream)}] => {notification}")),
+
+                rover.CoreTimeUpperStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.CoreTimeUpperStream)}] => {notification}")),
+            };
+            //await rover.DriveAsync(255, Angle.Zero, cancellationToken);
+            await Task.Delay(5000, cancellationToken);
+            //await rover.StopAsync(cancellationToken);
             subscriptions.Dispose();
         }
 
