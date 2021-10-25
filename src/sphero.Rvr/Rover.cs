@@ -249,6 +249,8 @@ namespace sphero.Rvr
         public async Task<SystemInfo> WakeAsync(CancellationToken cancellationToken)
         {
             await _powerDevice.WakeAsync(cancellationToken);
+            await _driveDevice.ResetYawAsync(cancellationToken);
+            await _sensorDevice.ResetLocatorXAndYAsync(cancellationToken);
             return await GetInfoAsync(cancellationToken);
         }
 
