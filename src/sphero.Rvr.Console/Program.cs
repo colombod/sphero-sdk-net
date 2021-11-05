@@ -4,6 +4,7 @@ using System;
 using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
+
 using UnitsNet;
 
 namespace sphero.Rvr.Console
@@ -15,10 +16,27 @@ namespace sphero.Rvr.Console
             var port = args.Length > 0 ? args[0] : "COM5";
 
             var rover = new Rover(port);
-
+            rover.EnableLogging();
             var systemInfo = await rover.WakeAsync(CancellationToken.None);
 
             await rover.ConfigureRoverAsync(CancellationToken.None);
+
+            rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(1));
+
+            await Task.Delay(3000);
+
+            rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(2));
+
+            await Task.Delay(3000);
+
+            rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(0.2));
+
+            await Task.Delay(3000);
+
+            rover.Stop();
+
+
+            rover.Stop();
 
             System.Console.WriteLine(nameof(TestLeds));
             await TestLeds(rover, CancellationToken.None);
@@ -28,36 +46,13 @@ namespace sphero.Rvr.Console
 
             await rover.SleepAsync(CancellationToken.None);
 
-            // using var driver = new Driver(port);
-
-            //var power = new PowerDevice(driver);
-
-            //power.Subscribe(notification =>
-            //{
-            //    System.Console.WriteLine($" Battery voltage state : {notification.State}");
-            //});
-
-            //await power.EnableBatteryVoltageStateChangeNotificationsAsync(true, CancellationToken.None);
-
-            //await power.WakeAsync(CancellationToken.None);
-
-            //await TestDevice(new SensorDevice(driver));
-
-            //await TestDevice(new SystemInfoDevice(driver));
-
-            //await TestDevice(new IoDevice(driver));
-
-            //System.Console.ReadLine();
-
-            //await power.SleepAsync(CancellationToken.None);
-
             await Task.Delay(1000);
 
         }
 
         private static async Task TestSensorSubscriptions(Rover rover, CancellationToken cancellationToken)
         {
-          
+
             var subscriptions = new CompositeDisposable
             {
                 rover.AccelerationStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.AccelerationStream)}] => {notification}")),
@@ -82,9 +77,7 @@ namespace sphero.Rvr.Console
 
                 rover.CoreTimeUpperStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.CoreTimeUpperStream)}] => {notification}")),
             };
-            //await rover.DriveAsync(255, Angle.Zero, cancellationToken);
             await Task.Delay(5000, cancellationToken);
-            //await rover.StopAsync(cancellationToken);
             subscriptions.Dispose();
         }
 
@@ -115,44 +108,5 @@ namespace sphero.Rvr.Console
             await rover.SetAllLedOffAsync(cancellationToken);
         }
 
-
-        private static async Task TestDevice(SystemInfoDevice systemInfo)
-        {
-            var nordicProcessorVersion = await systemInfo.GetFirmwareVersionForNordicProcessorAsync(CancellationToken.None);
-
-            System.Console.WriteLine(nordicProcessorVersion.Version);
-
-            var stProcessorVersion = await systemInfo.GetFirmwareVersionForSTProcessorAsync(CancellationToken.None);
-
-            System.Console.WriteLine(stProcessorVersion.Version);
-
-            var boardRevision = await systemInfo.GetBoardRevisionAsync(CancellationToken.None);
-
-            System.Console.WriteLine(boardRevision.Revision);
-
-            var macAddress = await systemInfo.GetMacAddressAsync(CancellationToken.None);
-
-            System.Console.WriteLine(macAddress.Address);
-
-            var statsId = await systemInfo.GetStatsIdAsync(CancellationToken.None);
-
-            System.Console.WriteLine(statsId.Id);
-
-            var proc1Name = await systemInfo.GetProcessorNameAsync(1, CancellationToken.None);
-
-            System.Console.WriteLine(proc1Name.Name);
-
-            var proc2Name = await systemInfo.GetProcessorNameAsync(2, CancellationToken.None);
-
-            System.Console.WriteLine(proc2Name.Name);
-
-            var sku = await systemInfo.GetSkuAsync(CancellationToken.None);
-
-            System.Console.WriteLine(sku.Value);
-
-            var coreUpTimeInMilliseconds = await systemInfo.GetCoreUpTimeInMillisecondsAsync(CancellationToken.None);
-
-            System.Console.WriteLine(coreUpTimeInMilliseconds.Milliseconds);
-        }
     }
 }

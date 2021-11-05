@@ -1,16 +1,20 @@
-﻿using Pocket;
+﻿
+
 using sphero.Rvr.Devices;
 using sphero.Rvr.Notifications.SensorDevice;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Pocket;
 using UnitsNet;
 using CompositeDisposable = System.Reactive.Disposables.CompositeDisposable;
+
 
 namespace sphero.Rvr
 {
@@ -24,7 +28,7 @@ namespace sphero.Rvr
         private readonly PowerDevice _powerDevice;
         private readonly ConnectionDevice _connectionDevice;
         private readonly SystemInfoDevice _systemInfoDevice;
-        private LoggerSubscription _logSubscription;
+        private Pocket.LoggerSubscription _logSubscription;
 
         private Action<(byte LogLevel, DateTime TimestampUtc,
             Func<(string Message, (string Name, object Value)[] Properties)> Evaluate, Exception Exception, string
@@ -42,8 +46,11 @@ namespace sphero.Rvr
         private readonly ISubject<Length2D> _locatorStream = new ReplaySubject<Length2D>(1);
         private readonly ISubject<uint> _coreTimeLowerStream = new ReplaySubject<uint>(1);
         private readonly ISubject<uint> _coreTimeUpperStream = new ReplaySubject<uint>(1);
+        private readonly System.Reactive.Disposables.SerialDisposable _diveControllerRunningState = new();
 
-        private HashSet<SensorId> _activeSensors = new HashSet<SensorId>();
+        private readonly System.Reactive.Disposables.MultipleAssignmentDisposable _stopDisposable = new();
+
+        private HashSet<SensorId> _activeSensors = new();
 
 
         public Rover(string serialPort) : this(new Driver(serialPort)) { }
@@ -241,6 +248,8 @@ namespace sphero.Rvr
 
         public void Dispose()
         {
+            _diveControllerRunningState.Dispose();
+            _stopDisposable.Dispose();
             _disposables?.Dispose();
             _driver.Dispose();
             _logSubscription?.Dispose();
@@ -271,40 +280,83 @@ namespace sphero.Rvr
             return new SystemInfo(boardRevision.Revision, new ProcessorInfo[] { new(p1Name.Name, p1FwVersion.Version), new(p2Name.Name, p2FwVersion.Version) });
         }
 
-        public Task DriveAsync(byte speed, Angle heading, CancellationToken cancellationToken)
+        public IDisposable DriveAsTank(Speed leftThreadSpeed, Speed rightThreadSpeed)
         {
-            return _driveDevice.DriveWithHeadingAsync(speed, heading,DriveFlags.NoFlags, cancellationToken);
+            (Action<CancellationToken> loopAction, Action<CancellationToken> stopAction) handlers = (
+                 (ct) =>
+                 {
+                     _driveDevice.DriveAsTankAsync(leftThreadSpeed, rightThreadSpeed, ct);
+                 },
+                 (ct) =>
+                 {
+                     _driveDevice.DriveAsTankAsync(Speed.Zero, Speed.Zero, ct);
+                 }
+            );
+
+            return ConfigureDriveMode(handlers);
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        private IDisposable ConfigureDriveMode((Action<CancellationToken> loopAction, Action<CancellationToken> stopAction) handlers)
         {
-            return _driveDevice.DriveWithHeadingAsync(0, Angle.Zero, DriveFlags.NoFlags, cancellationToken);
-        }
-    }
+            _diveControllerRunningState.Disposable = System.Reactive.Disposables.Disposable.Empty;
+            _stopDisposable.Disposable = System.Reactive.Disposables.Disposable.Empty;
 
-    public record ProcessorInfo(string Name, Version FirmwareVersion);
+            var source = new CancellationTokenSource();
 
-    public record SystemInfo(byte BoardRevision, ProcessorInfo[] Processors)
-    {
-        protected virtual bool PrintMembers(StringBuilder builder)
-        {
-            builder.Append($"{nameof(BoardRevision)} = {BoardRevision}");
-            if (Processors?.Length > 0)
+            var loop = Observable.Interval(TimeSpan.FromSeconds(0.1)).Subscribe(_ =>
             {
-                builder.AppendJoin(", ", Processors.Select(p => p.ToString()));
-            }
-            return true;
+                if (!source.IsCancellationRequested)
+                {
+                    handlers.loopAction(source.Token);
+                }
+            });
+
+            var loopDisposable = System.Reactive.Disposables.Disposable.Create(() =>
+            {
+                loop.Dispose();
+                source.Cancel();
+                source.Dispose();
+            });
+
+            var stopDisposable = System.Reactive.Disposables.Disposable.Create(() =>
+            {
+                loopDisposable.Dispose();
+                handlers.stopAction(CancellationToken.None);
+            });
+
+            _stopDisposable.Disposable = stopDisposable;
+
+            _diveControllerRunningState.Disposable = loopDisposable;
+
+            return new CompositeDisposable
+            {
+                loopDisposable,
+                stopDisposable
+            };
+        }
+
+        public void Stop()
+        {
+            _diveControllerRunningState.Disposable = System.Reactive.Disposables.Disposable.Empty;
+            _stopDisposable.Disposable = System.Reactive.Disposables.Disposable.Empty;
+        }
+
+
+        public IDisposable DriveWithYaw(Angle yaw, Speed speed)
+        {
+
+            (Action<CancellationToken> loopAction, Action<CancellationToken> stopAction) handlers = (
+                (ct) =>
+                {
+                    _driveDevice.DriveWithYawAsync(yaw, speed, ct);
+                },
+                (ct) =>
+                {
+                    _driveDevice.DriveWithYawAsync(yaw, Speed.Zero, ct);
+                }
+            );
+
+            return ConfigureDriveMode(handlers);
         }
     }
-
-    public record Attitude(Angle Pitch, Angle Roll, Angle Yaw);
-
-    public record Acceleration3D(Acceleration X, Acceleration Y, Acceleration Z);
-
-    public record Speed2D(Speed X, Speed Y);
-
-    public record Length2D(Length X, Length Y);
-
-    public record RotationalSpeed3D(RotationalSpeed X, RotationalSpeed Y, RotationalSpeed Z);
-    public record ColorDetection(Color Color, float Confidence);
 }

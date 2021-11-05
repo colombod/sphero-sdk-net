@@ -22,7 +22,7 @@ namespace sphero.Rvr.Devices
                 throw new ArgumentNullException(nameof(driver));
             }
 
-            _disposables.Add(driver.Subscribe(ProcessMessage));
+            _disposables.Add(driver.Where(m => !(m.Header.CommandId == 61 && m.Header.DeviceId == DeviceIdentifier.Sensor)).Subscribe(ProcessMessage));
         }
 
         private void ProcessMessage(Message message)

@@ -2,19 +2,23 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using sphero.Rvr.Notifications.DriveDevice;
+using UnitsNet;
 using GetMotorFaultState = sphero.Rvr.Responses.DriveDevice.GetMotorFaultState;
 
 namespace sphero.Rvr.Devices
 {
-    public class DriveDevice
+    public class DriveDevice : IDisposable
     {
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Drive;
 
         private readonly IDriver _driver;
+        private readonly NotificationManager _notificationManager;
 
         public DriveDevice(IDriver driver)
         {
             _driver = driver ?? throw new ArgumentNullException(nameof(driver));
+            _notificationManager = new NotificationManager(_driver);
         }
 
         public Task SetRawMotorAsync(RawMotorMode leftRawMotor, byte leftMotorSpeed, RawMotorMode rightRawMotor, byte rightMotorSpeed, CancellationToken cancellationToken)
@@ -34,6 +38,26 @@ namespace sphero.Rvr.Devices
         {
             var driveWithHeading = new DriveWithHeading(motorSpeed, heading, flags);
             return _driver.SendAsync(driveWithHeading.ToMessage(), cancellationToken);
+        }
+
+        public Task DriveAsTankAsync(UnitsNet.Speed leftThreadSpeed, UnitsNet.Speed rightThreadSpeed,
+            CancellationToken cancellationToken)
+        {
+            var driveAsTank = new DriveAsTank(leftThreadSpeed, rightThreadSpeed);
+            return _driver.SendAsync(driveAsTank.ToMessage(), cancellationToken);
+        }
+
+        public Task DriveAsTankNormalizedAsync(sbyte leftThreadSpeed, sbyte rightThreadSpeed,
+            CancellationToken cancellationToken)
+        {
+            var driveAsTank = new DriveAsTankNormalized(leftThreadSpeed, rightThreadSpeed);
+            return _driver.SendAsync(driveAsTank.ToMessage(), cancellationToken);
+        }
+
+        public Task DriveWithYawAsync(Angle yaw, Speed speed, CancellationToken cancellationToken)
+        {
+            var driveWithYaw = new DriveWithYaw(yaw, speed);
+            return _driver.SendAsync(driveWithYaw.ToMessage(), cancellationToken);
         }
 
         public Task EnableMotorFaultNotificationsAsync(bool enable,
@@ -56,5 +80,17 @@ namespace sphero.Rvr.Devices
             var response = await _driver.SendRequestAsync(getMotorFaultState.ToMessage(), cancellationToken);
             return new GetMotorFaultState(response);
         }
+
+        public IDisposable Subscribe(Action<ActiveControllerHasStopped> onNext)
+        {
+            return _notificationManager.Subscribe(onNext);
+        }
+
+        public void Dispose()
+        {
+            _notificationManager.Dispose();
+        }
+
+      
     }
 }
