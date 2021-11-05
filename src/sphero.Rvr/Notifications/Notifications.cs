@@ -11,6 +11,8 @@ namespace sphero.Rvr.Notifications
         {
             [typeof(sphero.Rvr.Notifications.DriveDevice.MotorStallNotification)] = (2, 22, 38),
             [typeof(sphero.Rvr.Notifications.DriveDevice.MotorFaultNotification)] = (2, 22, 40),
+            [typeof(sphero.Rvr.Notifications.DriveDevice.ActiveControllerHasStopped)] = (2, 22, 63),
+            [typeof(sphero.Rvr.Notifications.DriveDevice.ReachedTargetXYPosition)] = (2, 22, 58),
             [typeof(sphero.Rvr.Notifications.SensorDevice.GyroMaxNotification)] = (2, 24, 16),
             [typeof(sphero.Rvr.Notifications.SensorDevice.RobotToRobotInfraredMessageReceivedNotification)] = (2, 24, 44),
             [typeof(sphero.Rvr.Notifications.SensorDevice.ColorDetectionNotification)] = (1, 24, 54),
@@ -57,6 +59,8 @@ namespace sphero.Rvr.Notifications
                 case (2, 22, 40):
                     return new sphero.Rvr.Notifications.DriveDevice.MotorFaultNotification(message);
                 case (2, 22, 63):
+                    return new sphero.Rvr.Notifications.DriveDevice.ActiveControllerHasStopped(message);
+                case (2, 22, 58):
                     return new sphero.Rvr.Notifications.DriveDevice.ActiveControllerHasStopped(message);
                 case (2, 24, 16):
                     return new sphero.Rvr.Notifications.SensorDevice.GyroMaxNotification(message);

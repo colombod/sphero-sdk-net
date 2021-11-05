@@ -6,18 +6,18 @@ using UnitsNet;
 namespace sphero.Rvr.Commands.DriveDevice
 {
     [Command(CommandId, DeviceId)]
-    public class DriveAsTank : Command
+    public class DriveWithYaw : Command
     {
-        public Speed LeftThreadSpeed { get; }
-        public Speed RightThreadSpeed { get; }
+        public Angle Yaw { get; }
+        public Speed Speed { get; }
 
-        public DriveAsTank(Speed leftThreadSpeed, Speed rightThreadSpeed)
+        public DriveWithYaw(Angle yaw, Speed speed)
         {
-            LeftThreadSpeed = leftThreadSpeed;
-            RightThreadSpeed = rightThreadSpeed;
+            Yaw = yaw;
+            Speed = speed;
         }
 
-        public const byte CommandId = 0x32;
+        public const byte CommandId = 0x36;
 
         public const DeviceIdentifier DeviceId = DeviceIdentifier.Drive;
 
@@ -31,19 +31,21 @@ namespace sphero.Rvr.Commands.DriveDevice
                 sequence: GetSequenceNumber(),
                 flags: Flags.DefaultRequestWithNoResponseFlags);
 
-            var leftBytes = BitConverter.GetBytes((float)LeftThreadSpeed.MetersPerSecond);
-            var rightBytes = BitConverter.GetBytes((float)RightThreadSpeed.MetersPerSecond);
+
+
+            var yawBytes = BitConverter.GetBytes((float)Yaw.Degrees);
+            var speedBytes = BitConverter.GetBytes((float)Speed.MetersPerSecond);
 
             if (BitConverter.IsLittleEndian)
             {
-                leftBytes = leftBytes.Reverse().ToArray();
-                rightBytes = rightBytes.Reverse().ToArray();
+                yawBytes = yawBytes.Reverse().ToArray();
+                speedBytes = speedBytes.Reverse().ToArray();
             }
 
             var rawData = new byte[8];
 
-            Buffer.BlockCopy(leftBytes, 0, rawData, 0, 4);
-            Buffer.BlockCopy(rightBytes, 0, rawData, 4, 4);
+            Buffer.BlockCopy(yawBytes, 0, rawData, 0, 4);
+            Buffer.BlockCopy(speedBytes, 0, rawData, 4, 4);
 
             return new Message(header, rawData);
         }

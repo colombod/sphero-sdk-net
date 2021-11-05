@@ -358,5 +358,12 @@ namespace sphero.Rvr
 
             return ConfigureDriveMode(handlers);
         }
+
+        public IDisposable DriveTo(Length x, Length y, Angle yaw, Speed speed, DriveFlags flags = DriveFlags.NoFlags)
+        {
+
+            _driveDevice.DriveToAsync(x, y, yaw, speed, flags, CancellationToken.None);
+            return System.Reactive.Disposables.Disposable.Empty;
+        }
     }
 }

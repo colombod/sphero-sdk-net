@@ -60,6 +60,24 @@ namespace sphero.Rvr.Devices
             return _driver.SendAsync(driveWithYaw.ToMessage(), cancellationToken);
         }
 
+        public Task DriveWithYawNormalizedAsync(sbyte yaw, sbyte speed, CancellationToken cancellationToken)
+        {
+            var driveWithYawNormalized = new DriveWithYawNormalized(yaw, speed);
+            return _driver.SendAsync(driveWithYawNormalized.ToMessage(), cancellationToken);
+        }
+
+        public Task DriveToAsync(Length x, Length y, Angle yaw, Speed speed, DriveFlags flags, CancellationToken cancellationToken)
+        {
+            var driveTo = new DriveTo(x,y,yaw, speed,flags);
+            return _driver.SendAsync(driveTo.ToMessage(), cancellationToken);
+        }
+
+        public Task DriveToNormalizedAsync(sbyte x, sbyte y, sbyte yaw, sbyte speed, DriveFlags flags, CancellationToken cancellationToken)
+        {
+            var driveToNormalized = new DriveToNormalized(x, y, yaw, speed, flags);
+            return _driver.SendAsync(driveToNormalized.ToMessage(), cancellationToken);
+        }
+
         public Task EnableMotorFaultNotificationsAsync(bool enable,
             CancellationToken cancellationToken)
         {
@@ -86,11 +104,17 @@ namespace sphero.Rvr.Devices
             return _notificationManager.Subscribe(onNext);
         }
 
+        public IDisposable Subscribe(Action<ReachedTargetXYPosition> onNext)
+        {
+            return _notificationManager.Subscribe(onNext);
+        }
+
         public void Dispose()
         {
             _notificationManager.Dispose();
         }
 
-      
+
+       
     }
 }
