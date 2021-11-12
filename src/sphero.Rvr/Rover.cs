@@ -192,17 +192,18 @@ namespace sphero.Rvr
         {
             var allSensors = new[]
             {
-                SensorId.AmbientLight,
-                SensorId.Accelerometer,
+                SensorId.Quaternion,
                 SensorId.Attitude,
+                SensorId.Accelerometer,
                 SensorId.ColorDetection,
-                SensorId.CoreTimeLower,
-                SensorId.CoreTimeUpper,
                 SensorId.Gyroscope,
                 SensorId.Locator,
-                SensorId.Quaternion,
+                SensorId.Velocity,
                 SensorId.Speed,
-                SensorId.Velocity
+                SensorId.CoreTimeLower,
+                SensorId.CoreTimeUpper,
+                SensorId.AmbientLight,
+                SensorId.Encoders
             };
             return ConfigureRoverAsync(allSensors, TimeSpan.FromSeconds(0.1), cancellationToken);
         }

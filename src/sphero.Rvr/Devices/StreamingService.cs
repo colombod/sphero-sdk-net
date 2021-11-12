@@ -108,6 +108,12 @@ namespace sphero.Rvr.Devices
                                 position += aln.FromRawData(streamingServiceDataNotification.SensorData, position);
                                 notification = aln;
                                 break;
+                            case SensorId.Encoders:
+                                channel = _channels[sensorId];
+                                var en = new EncodersNotification();
+                                position += en.FromRawData(streamingServiceDataNotification.SensorData, position);
+                                notification = en;
+                                break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -194,6 +200,7 @@ namespace sphero.Rvr.Devices
                     return SensorDataSize.ThirtyTwoBit;
                 case SensorId.CoreTimeLower:
                 case SensorId.CoreTimeUpper:
+                case SensorId.Encoders:
                     return SensorDataSize.ThirtyTwoBit;
                 case SensorId.AmbientLight:
                     return SensorDataSize.SixteenBit;
@@ -213,6 +220,7 @@ namespace sphero.Rvr.Devices
                 case SensorId.Locator:
                 case SensorId.Velocity:
                 case SensorId.Speed:
+                case SensorId.Encoders:
                     return (2, 2);
                 case SensorId.ColorDetection:
                     return (1, 1);

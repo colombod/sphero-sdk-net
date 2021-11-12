@@ -1,6 +1,7 @@
 ﻿using sphero.Rvr.Commands.SensorDevice;
 using sphero.Rvr.Notifications.SensorDevice;
 using sphero.Rvr.Responses.SensorDevice;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -266,5 +267,9 @@ namespace sphero.Rvr.Devices
             return _streamingService.Subscribe(onNotification);
         }
 
+        public IDisposable SubscribeToStream(Action<EncodersNotification> onNotification)
+        {
+            return _streamingService.Subscribe(onNotification);
+        }
     }
 }

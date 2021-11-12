@@ -12,6 +12,7 @@
         Speed = 0x08,
         CoreTimeLower = 0x05,
         CoreTimeUpper = 0x09,
-        AmbientLight = 0x0A
+        AmbientLight = 0x0A,
+        Encoders = 0x0B
     }
 }
