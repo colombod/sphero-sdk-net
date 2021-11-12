@@ -142,11 +142,11 @@ namespace sphero.Rvr.Devices
             foreach (var sensorId in sensors)
             {
                 _channels[sensorId] = new Subject<Event>();
-                var (processorId, slotId) = SensorToProcessorAndSlotId(sensorId);
-
-                var slot = GetOrCreateSlot(processorId, slotId);
-
-                slot.Sensors.Add(new(sensorId, SensorToDataSize(sensorId)));
+                foreach (var (processorId, slotId) in SensorToProcessorAndSlotIdsSlotIds(sensorId))
+                {
+                    var slot = GetOrCreateSlot(processorId, slotId);
+                    slot.Sensors.Add(new(sensorId, SensorToDataSize(sensorId)));
+                }
             }
 
             var messages = new List<ConfigureStreamingService>();
@@ -208,7 +208,7 @@ namespace sphero.Rvr.Devices
                     throw new ArgumentOutOfRangeException(nameof(sensorId), sensorId, null);
             }
         }
-        private (byte processorId, byte slotId) SensorToProcessorAndSlotId(SensorId sensorId)
+        private (byte processorId, byte slotId)[] SensorToProcessorAndSlotIdsSlotIds(SensorId sensorId)
         {
             switch (sensorId)
             {
@@ -216,19 +216,19 @@ namespace sphero.Rvr.Devices
                 case SensorId.Gyroscope:
                 case SensorId.Attitude:
                 case SensorId.Accelerometer:
-                    return (2, 1);
+                    return new (byte processorId, byte slotId)[]{(2, 1)};
                 case SensorId.Locator:
                 case SensorId.Velocity:
                 case SensorId.Speed:
                 case SensorId.Encoders:
-                    return (2, 2);
+                    return new (byte processorId, byte slotId)[] { (2, 2) };
                 case SensorId.ColorDetection:
-                    return (1, 1);
+                    return new (byte processorId, byte slotId)[] { (1, 1) };
                 case SensorId.CoreTimeLower:
                 case SensorId.CoreTimeUpper:
-                    return (1, 2);
+                    return new (byte processorId, byte slotId)[] { (1, 3), (2, 3) };
                 case SensorId.AmbientLight:
-                    return (1, 3);
+                    return new (byte processorId, byte slotId)[] { (1, 2) };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(sensorId), sensorId, null);
             }
