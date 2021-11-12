@@ -8,18 +8,9 @@
     <StartupObject />
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="FakeDriver.cs" />
-    <Compile Remove="FluentAssertionsExtensions.cs" />
-    <Compile Remove="SensorDeviceTests.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="bufferData.bin" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="SensorDeviceTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
