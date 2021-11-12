@@ -1,67 +1,68 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.0.1</Version>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Description>.NET Api for Sphero RVR platform</Description>
-    <RepositoryUrl>https://github.com/colombod/sphero-sdk-net</RepositoryUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>RVR_SDK_icon.png</PackageIcon>
-    <PackageIconUrl />
-  </PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>preview</LangVersion>
+		<TargetFramework>net6.0</TargetFramework>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Version>0.0.1</Version>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Description>.NET Api for Sphero RVR platform</Description>
+		<RepositoryUrl>https://github.com/colombod/sphero-sdk-net</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>RVR_SDK_icon.png</PackageIcon>
+		<PackageIconUrl />
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="PocketLogger.Subscribe" Version="0.7.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Serilog.Sinks.RollingFileAlternate" Version="2.0.9" />
-	  <PackageReference Include="PocketLogger" Version="0.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Device.Gpio" Version="1.5.0" />
-    <PackageReference Include="System.IO.Pipelines" Version="5.0.1" />
-    <PackageReference Include="System.IO.Ports" Version="5.0.1" />
-    <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
-    <PackageReference Include="UnitsNet" Version="4.102.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="PocketLogger.Subscribe" Version="0.7.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Serilog.Sinks.RollingFileAlternate" Version="2.0.9" />
+		<PackageReference Include="PocketLogger" Version="0.4.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Device.Gpio" Version="1.5.0" />
+		<PackageReference Include="System.IO.Pipelines" Version="6.0.0" />
+		<PackageReference Include="System.IO.Ports" Version="6.0.0" />
+		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
+		<PackageReference Include="UnitsNet" Version="4.103.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\..\README.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="..\RVR_SDK_icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="Notifications\Notifications.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Notifications.tt</DependentUpon>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="..\RVR_SDK_icon.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+		<None Include="Notifications\Notifications.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Notifications.tt</DependentUpon>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="Notifications\Notifications.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Notifications.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Notifications\Notifications.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Notifications.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Notifications\Notifications.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Notifications.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Notifications\Notifications.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Notifications.tt</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
 </Project>
