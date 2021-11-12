@@ -1,7 +1,6 @@
-﻿namespace sphero.Rvr.Protocol
-{
-    public class Event
-    {
+﻿namespace sphero.Rvr.Protocol;
 
-    }
+public class Event
+{
+
 }

@@ -1,9 +1,8 @@
-﻿namespace sphero.Rvr
+﻿namespace sphero.Rvr;
+
+internal enum SensorDataSize : byte
 {
-    internal enum SensorDataSize : byte
-    {
-        EightBit = 0x00,
-        SixteenBit = 0x01,
-        ThirtyTwoBit = 0x02
-    }
+    EightBit = 0x00,
+    SixteenBit = 0x01,
+    ThirtyTwoBit = 0x02
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 
-namespace sphero.Rvr
-{
-    public record ProcessorInfo(string Name, Version FirmwareVersion);
-}
+namespace sphero.Rvr;
+
+public record ProcessorInfo(string Name, Version FirmwareVersion);

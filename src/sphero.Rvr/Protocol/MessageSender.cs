@@ -2,13 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace sphero.Rvr.Protocol
+namespace sphero.Rvr.Protocol;
+
+public class MessageSender
 {
-    public class MessageSender
+    public Task SendAsync(Message message, CancellationToken token)
     {
-        public Task SendAsync(Message message, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

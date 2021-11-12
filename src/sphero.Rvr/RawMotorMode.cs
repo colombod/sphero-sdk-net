@@ -1,9 +1,8 @@
-﻿namespace sphero.Rvr
+﻿namespace sphero.Rvr;
+
+public enum RawMotorMode : byte
 {
-    public enum RawMotorMode : byte
-    {
-        Off = 0x00,
-        Forward = 0x01,
-        Reverse = 0x02
-    }
+    Off = 0x00,
+    Forward = 0x01,
+    Reverse = 0x02
 }

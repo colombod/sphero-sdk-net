@@ -3,10 +3,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace sphero.Rvr
+namespace sphero.Rvr;
+
+public interface IDriver : IObservable<Message>, IDisposable
 {
-    public interface IDriver : IObservable<Message>, IDisposable
-    {
-        Task SendAsync(Message message, CancellationToken cancellationToken);
-    }
+    Task SendAsync(Message message, CancellationToken cancellationToken);
 }

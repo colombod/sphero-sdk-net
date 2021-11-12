@@ -2,21 +2,20 @@
 using sphero.Rvr.Protocol;
 using UnitsNet;
 
-namespace sphero.Rvr.Notifications.SensorDevice
-{
-    public class SpeedNotification : Event
-    {
-        public int FromRawData(byte[] rawData, int offset)
-        {
-            if (rawData == null)
-            {
-                throw new ArgumentNullException(nameof(rawData));
-            }
+namespace sphero.Rvr.Notifications.SensorDevice;
 
-            Speed = Speed.FromMetersPerSecond(rawData[offset..(offset + sizeof(uint))].ToUInt().ToFloatInRange(0, 5));
-            return 1 * sizeof(uint);
+public class SpeedNotification : Event
+{
+    public int FromRawData(byte[] rawData, int offset)
+    {
+        if (rawData == null)
+        {
+            throw new ArgumentNullException(nameof(rawData));
         }
 
-        public Speed Speed { get; private set; }
+        Speed = Speed.FromMetersPerSecond(rawData[offset..(offset + sizeof(uint))].ToUInt().ToFloatInRange(0, 5));
+        return 1 * sizeof(uint);
     }
+
+    public Speed Speed { get; private set; }
 }

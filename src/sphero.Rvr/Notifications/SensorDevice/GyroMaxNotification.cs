@@ -2,23 +2,22 @@
 
 using System;
 
-namespace sphero.Rvr.Notifications.SensorDevice
+namespace sphero.Rvr.Notifications.SensorDevice;
+
+public class GyroMaxNotification : Event
 {
-    public class GyroMaxNotification : Event
+    public GyroMaxNotification(Message message)
     {
-        public GyroMaxNotification(Message message)
+        if (message == null)
         {
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-
-            Flags = (GyroMaxFlag)message.Data[0];
+            throw new ArgumentNullException(nameof(message));
         }
 
-        public GyroMaxFlag Flags
-        {
-            get;
-        }
+        Flags = (GyroMaxFlag)message.Data[0];
+    }
+
+    public GyroMaxFlag Flags
+    {
+        get;
     }
 }

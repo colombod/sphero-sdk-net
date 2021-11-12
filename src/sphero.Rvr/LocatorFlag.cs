@@ -1,8 +1,7 @@
-﻿namespace sphero.Rvr
+﻿namespace sphero.Rvr;
+
+public enum LocatorFlag
 {
-    public enum LocatorFlag
-    {
-        None = 0x0,
-        AutoCalibrate = 0x01
-    }
+    None = 0x0,
+    AutoCalibrate = 0x01
 }

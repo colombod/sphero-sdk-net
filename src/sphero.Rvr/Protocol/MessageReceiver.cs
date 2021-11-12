@@ -1,7 +1,6 @@
-﻿namespace sphero.Rvr.Protocol
-{
-    public class MessageReceiver
-    {
+﻿namespace sphero.Rvr.Protocol;
 
-    }
+public class MessageReceiver
+{
+
 }

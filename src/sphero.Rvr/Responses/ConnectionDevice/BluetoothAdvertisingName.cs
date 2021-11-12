@@ -2,21 +2,20 @@
 using sphero.Rvr.Commands.ConnectionDevice;
 using sphero.Rvr.Protocol;
 
-namespace sphero.Rvr.Responses.ConnectionDevice
-{
-    [OriginatingCommand(typeof(GetBluetoothAdvertisingName))]
-    public class BluetoothAdvertisingName : Response
-    {
-        public BluetoothAdvertisingName(Message message)
-        {
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
+namespace sphero.Rvr.Responses.ConnectionDevice;
 
-            Name = BitConverter.ToString(message.Data);
+[OriginatingCommand(typeof(GetBluetoothAdvertisingName))]
+public class BluetoothAdvertisingName : Response
+{
+    public BluetoothAdvertisingName(Message message)
+    {
+        if (message == null)
+        {
+            throw new ArgumentNullException(nameof(message));
         }
 
-        public string Name { get; }
+        Name = BitConverter.ToString(message.Data);
     }
+
+    public string Name { get; }
 }

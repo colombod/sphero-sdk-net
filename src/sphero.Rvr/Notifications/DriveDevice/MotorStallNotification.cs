@@ -2,13 +2,12 @@
 using System;
 
 
-namespace sphero.Rvr.Notifications.DriveDevice
+namespace sphero.Rvr.Notifications.DriveDevice;
+
+public class MotorStallNotification : Event
 {
-    public class MotorStallNotification : Event
+    public MotorStallNotification(Message message)
     {
-        public MotorStallNotification(Message message)
-        {
             
-        }
     }
 }

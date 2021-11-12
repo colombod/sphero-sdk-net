@@ -1,12 +1,11 @@
 ﻿using sphero.Rvr.Protocol;
 
-namespace sphero.Rvr.Notifications.DriveDevice
+namespace sphero.Rvr.Notifications.DriveDevice;
+
+public class ActiveControllerHasStopped : Event
 {
-    public class ActiveControllerHasStopped : Event
+    public ActiveControllerHasStopped(Message message)
     {
-        public ActiveControllerHasStopped(Message message)
-        {
             
-        }
     }
 }
