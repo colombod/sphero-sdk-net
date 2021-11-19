@@ -34,7 +34,8 @@ internal static class NotificationExtensions
         [typeof(sphero.Rvr.Notifications.SensorDevice.AccelerometerNotification)] = SensorId.Accelerometer,
         [typeof(sphero.Rvr.Notifications.SensorDevice.LocatorNotification)] = SensorId.Locator,
         [typeof(sphero.Rvr.Notifications.SensorDevice.CoreTimeLowerNotification)] = SensorId.CoreTimeLower,
-        [typeof(sphero.Rvr.Notifications.SensorDevice.CoreTimeUpperNotification)] = SensorId.CoreTimeUpper
+        [typeof(sphero.Rvr.Notifications.SensorDevice.CoreTimeUpperNotification)] = SensorId.CoreTimeUpper,
+        [typeof(sphero.Rvr.Notifications.SensorDevice.EncodersNotification)] = SensorId.Encoders
     };
 
     public static bool TryGetKey(Type messageType, out (byte SourceId, byte DeviceId, byte CommandId) key)

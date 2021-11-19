@@ -46,6 +46,8 @@ public class Rover : IDisposable
     private readonly ISubject<Length2D> _locatorStream = new ReplaySubject<Length2D>(1);
     private readonly ISubject<uint> _coreTimeLowerStream = new ReplaySubject<uint>(1);
     private readonly ISubject<uint> _coreTimeUpperStream = new ReplaySubject<uint>(1);
+    private readonly ISubject<EncodersState> _encodersStateStream = new ReplaySubject<EncodersState>(1);
+
     private readonly System.Reactive.Disposables.SerialDisposable _diveControllerRunningState = new();
 
     private readonly System.Reactive.Disposables.MultipleAssignmentDisposable _stopDisposable = new();
@@ -181,6 +183,10 @@ public class Rover : IDisposable
                 case SensorId.AmbientLight:
                     _disposables.Add(_sensorDevice.SubscribeToStream((AmbientLightNotification an) =>
                         _ambientLightStream.OnNext(an.Light)));
+                    break;
+                case SensorId.Encoders:
+                    _disposables.Add(_sensorDevice.SubscribeToStream((EncodersNotification en) =>
+                        _encodersStateStream.OnNext(new EncodersState(en.LeftTicks, en.RightTicks))));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -367,3 +373,5 @@ public class Rover : IDisposable
         return System.Reactive.Disposables.Disposable.Empty;
     }
 }
+
+public record EncodersState(long LeftTicks, long RightTicks);
