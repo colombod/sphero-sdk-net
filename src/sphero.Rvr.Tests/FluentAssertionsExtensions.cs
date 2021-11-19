@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using FluentAssertions.Collections;
 
@@ -14,6 +16,16 @@ public static class FluentAssertionsExtensions
     {
         public bool Equals(byte[]? x, byte[]? y)
         {
+
+            if (x == null)
+            {
+                throw new ArgumentNullException(nameof(x));
+            }
+            if (y == null)
+            {
+                throw new ArgumentNullException(nameof(y));
+            }
+
             var equal = x.Length == y.Length;
             var shouldMatchChecksum = true;
             var checksumIndices = new HashSet<int>

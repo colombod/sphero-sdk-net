@@ -27,7 +27,7 @@
 		<PackageReference Include="System.IO.Pipelines" Version="6.0.0" />
 		<PackageReference Include="System.IO.Ports" Version="6.0.0" />
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
-		<PackageReference Include="UnitsNet" Version="4.103.0" />
+		<PackageReference Include="UnitsNet" Version="4.104.0" />
 	</ItemGroup>
 
 	<ItemGroup>

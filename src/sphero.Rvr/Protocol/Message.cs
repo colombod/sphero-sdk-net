@@ -21,8 +21,8 @@ public class Message
     }
 
     public Header Header { get; }
-    public byte[] Data { get; }
 
+    public byte[] Data { get; }
 
     public byte[] ToRawBytes()
     {
