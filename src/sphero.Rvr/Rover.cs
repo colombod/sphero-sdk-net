@@ -374,5 +374,3 @@ public class Rover : IDisposable
         return System.Reactive.Disposables.Disposable.Empty;
     }
 }
-
-public record EncodersState(long LeftTicks, long RightTicks);
