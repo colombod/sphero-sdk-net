@@ -281,7 +281,7 @@ public class Rover : IDisposable
         var p1Name = await _systemInfoDevice.GetProcessorNameAsync(1, cancellationToken);
         var p1FwVersion = await _systemInfoDevice.GetFirmwareVersionForNordicProcessorAsync(cancellationToken);
 
-        var p2Name = await _systemInfoDevice.GetProcessorNameAsync(1, cancellationToken);
+        var p2Name = await _systemInfoDevice.GetProcessorNameAsync(2, cancellationToken);
         var p2FwVersion = await _systemInfoDevice.GetFirmwareVersionForSTProcessorAsync(cancellationToken);
 
         return new SystemInfo(boardRevision.Revision, new ProcessorInfo[] { new(p1Name.Name, p1FwVersion.Version), new(p2Name.Name, p2FwVersion.Version) });

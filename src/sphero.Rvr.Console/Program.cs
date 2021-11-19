@@ -1,6 +1,7 @@
 ﻿using sphero.Rvr.Devices;
 
 using System;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,27 +17,15 @@ internal class Program
         var port = args.Length > 0 ? args[0] : "COM5";
 
         var rover = new Rover(port);
-        rover.EnableLogging();
+      //  rover.EnableLogging();
         var systemInfo = await rover.WakeAsync(CancellationToken.None);
+
+        System.Console.WriteLine(systemInfo);
 
         await rover.ConfigureRoverAsync(CancellationToken.None);
 
-        rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(1));
-
-        await Task.Delay(3000);
-
-        rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(2));
-
-        await Task.Delay(3000);
-
-        rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(0.2));
-
-        await Task.Delay(3000);
-
-        rover.Stop();
-
-
-        rover.Stop();
+        System.Console.WriteLine(nameof(TestDriverWithYaw));
+        await TestDriverWithYaw(rover, CancellationToken.None);
 
         System.Console.WriteLine(nameof(TestLeds));
         await TestLeds(rover, CancellationToken.None);
@@ -48,6 +37,23 @@ internal class Program
 
         await Task.Delay(1000);
 
+    }
+
+    private static async Task TestDriverWithYaw(Rover rover, CancellationToken cancellationToken)
+    {
+        rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(1));
+
+        await Task.Delay(3000, cancellationToken);
+
+        rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(2));
+
+        await Task.Delay(3000, cancellationToken);
+
+        rover.DriveWithYaw(Angle.Zero, Speed.FromMetersPerSecond(0.2));
+
+        await Task.Delay(3000, cancellationToken);
+
+        rover.Stop();
     }
 
     private static async Task TestSensorSubscriptions(Rover rover, CancellationToken cancellationToken)
