@@ -42,7 +42,7 @@ public class Rover : IDisposable
     private readonly ISubject<ColorDetection> _colorDetectionStream = new ReplaySubject<ColorDetection>(1);
     private readonly ISubject<RotationalSpeed3D> _gyroscopeStream = new ReplaySubject<RotationalSpeed3D>(1);
     private readonly ISubject<Speed2D> _velocityStream = new ReplaySubject<Speed2D>(1);
-    private readonly ISubject<Speed> _speedStream = new ReplaySubject<Speed>(1);
+    //private readonly ISubject<Speed> _speedStream = new ReplaySubject<Speed>(1);
     private readonly ISubject<Length2D> _locatorStream = new ReplaySubject<Length2D>(1);
     private readonly ISubject<uint> _coreTimeLowerStream = new ReplaySubject<uint>(1);
     private readonly ISubject<uint> _coreTimeUpperStream = new ReplaySubject<uint>(1);
@@ -82,13 +82,15 @@ public class Rover : IDisposable
 
     public IObservable<Speed2D> VelocityStream => _velocityStream;
 
-    public IObservable<Speed> SpeedStream => _speedStream;
+    //public IObservable<Speed> SpeedStream => _speedStream;
 
     public IObservable<Length2D> LocatorStream => _locatorStream;
 
     public IObservable<uint> CoreTimeLowerStream => _coreTimeLowerStream;
 
     public IObservable<uint> CoreTimeUpperStream => _coreTimeUpperStream;
+
+    public IObservable<EncodersState> EncoderStateStream => _encodersStateStream;
 
     public void EnableLogging(
         Action<(byte LogLevel, DateTime TimestampUtc,
@@ -168,10 +170,10 @@ public class Rover : IDisposable
                     _disposables.Add(_sensorDevice.SubscribeToStream((VelocityNotification vn) =>
                         _velocityStream.OnNext(new Speed2D(vn.X, vn.Y))));
                     break;
-                case SensorId.Speed:
-                    _disposables.Add(_sensorDevice.SubscribeToStream((SpeedNotification sn) =>
-                        _speedStream.OnNext(sn.Speed)));
-                    break;
+                //case SensorId.Speed:
+                //    _disposables.Add(_sensorDevice.SubscribeToStream((SpeedNotification sn) =>
+                //        _speedStream.OnNext(sn.Speed)));
+                //    break;
                 case SensorId.CoreTimeLower:
                     _disposables.Add(_sensorDevice.SubscribeToStream((CoreTimeLowerNotification ctln) =>
                         _coreTimeLowerStream.OnNext(ctln.Time)));
@@ -205,7 +207,6 @@ public class Rover : IDisposable
             SensorId.Gyroscope,
             SensorId.Locator,
             SensorId.Velocity,
-            SensorId.Speed,
             SensorId.CoreTimeLower,
             SensorId.CoreTimeUpper,
             SensorId.AmbientLight,

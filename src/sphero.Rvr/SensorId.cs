@@ -9,7 +9,7 @@ public enum SensorId : ushort
     Gyroscope = 0x04,
     Locator = 0x06,
     Velocity = 0x07,
-    Speed = 0x08,
+    // Speed = 0x08, unsupported ?
     CoreTimeLower = 0x05,
     CoreTimeUpper = 0x09,
     AmbientLight = 0x0A,

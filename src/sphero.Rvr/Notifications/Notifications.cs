@@ -25,7 +25,7 @@ internal static class NotificationExtensions
     private static readonly Dictionary<Type, SensorId> TypeToSensorId = new()
     {
         [typeof(sphero.Rvr.Notifications.SensorDevice.QuaternionNotification)] = SensorId.Quaternion,
-        [typeof(sphero.Rvr.Notifications.SensorDevice.SpeedNotification)] = SensorId.Speed,
+        //[typeof(sphero.Rvr.Notifications.SensorDevice.SpeedNotification)] = SensorId.Speed,
         [typeof(sphero.Rvr.Notifications.SensorDevice.VelocityNotification)] = SensorId.Velocity,
         [typeof(sphero.Rvr.Notifications.SensorDevice.GyroscopeNotification)] = SensorId.Gyroscope,
         [typeof(sphero.Rvr.Notifications.SensorDevice.ColorDetectionNotification)] = SensorId.ColorDetection,

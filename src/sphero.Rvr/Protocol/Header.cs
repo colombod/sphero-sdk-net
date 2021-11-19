@@ -26,7 +26,7 @@ public class Header
 
     public override string ToString()
     {
-        var errorCodeMessage = ErrorCode.HasValue ? $"ErrorCode {Convert.ToString((byte)ErrorCode.Value,2)}" : string.Empty;
+        var errorCodeMessage = ErrorCode.HasValue ? $" ErrorCode {(byte)ErrorCode.Value} ({ErrorCode.Value.getApiErrorMessageFromCode()})" : string.Empty;
 
         return $"CommandId {CommandId:X} TargetId {TargetId:X} SourceId {SourceId:X} DeviceId {DeviceId} ({((byte)DeviceId):X}) Sequence {Sequence} Flags { Convert.ToString(((byte)Flags),2)}{errorCodeMessage}";
     }

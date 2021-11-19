@@ -77,11 +77,12 @@ internal class Program
 
             rover.LocatorStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.LocatorStream)}] => {notification}")),
 
-            rover.SpeedStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.SpeedStream)}] => {notification}")),
-
             rover.CoreTimeLowerStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.CoreTimeLowerStream)}] => {notification}")),
 
             rover.CoreTimeUpperStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.CoreTimeUpperStream)}] => {notification}")),
+
+            rover.EncoderStateStream.Subscribe(notification => System.Console.WriteLine($"[{nameof(rover.EncoderStateStream)}] => {notification}")),
+
         };
         await Task.Delay(5000, cancellationToken);
         subscriptions.Dispose();

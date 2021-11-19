@@ -9,7 +9,7 @@ public enum ErrorCode : byte
     restricted = 0x04,
     bad_data_length = 0x05,
     failed = 0x06,
-    bad_data_value = 0x07,
+    bad_parameter_value = 0x07, // At least one data parameter is invalid
     busy = 0x08,
     bad_tid = 0x09,
     target_unavailable = 0x0A

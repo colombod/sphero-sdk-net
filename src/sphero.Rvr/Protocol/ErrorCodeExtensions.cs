@@ -31,7 +31,7 @@ public static class ErrorCodeExtensions
             case ErrorCode.failed:
                 errorMessage = "Command Failed";
                 break;
-            case ErrorCode.bad_data_value:
+            case ErrorCode.bad_parameter_value:
                 errorMessage = "Bad Parameter Value";
                 break;
             case ErrorCode.busy:

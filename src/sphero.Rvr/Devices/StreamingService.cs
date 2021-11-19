@@ -84,12 +84,12 @@ public class StreamingService
                             position += vn.FromRawData(streamingServiceDataNotification.SensorData, position);
                             notification = vn;
                             break;
-                        case SensorId.Speed:
-                            channel = _channels[sensorId];
-                            var sn = new SpeedNotification();
-                            position += sn.FromRawData(streamingServiceDataNotification.SensorData, position);
-                            notification = sn;
-                            break;
+                        //case SensorId.Speed:
+                        //    channel = _channels[sensorId];
+                        //    var sn = new SpeedNotification();
+                        //    position += sn.FromRawData(streamingServiceDataNotification.SensorData, position);
+                        //    notification = sn;
+                        //    break;
                         case SensorId.CoreTimeLower:
                             channel = _channels[sensorId];
                             var ctln = new CoreTimeLowerNotification();
@@ -196,7 +196,7 @@ public class StreamingService
                 return SensorDataSize.SixteenBit;
             case SensorId.Locator:
             case SensorId.Velocity:
-            case SensorId.Speed:
+                //case SensorId.Speed:
                 return SensorDataSize.ThirtyTwoBit;
             case SensorId.CoreTimeLower:
             case SensorId.CoreTimeUpper:
@@ -216,10 +216,10 @@ public class StreamingService
             case SensorId.Gyroscope:
             case SensorId.Attitude:
             case SensorId.Accelerometer:
-                return new (byte processorId, byte slotId)[]{(2, 1)};
+                return new (byte processorId, byte slotId)[] { (2, 1) };
             case SensorId.Locator:
             case SensorId.Velocity:
-            case SensorId.Speed:
+            // case SensorId.Speed:
             case SensorId.Encoders:
                 return new (byte processorId, byte slotId)[] { (2, 2) };
             case SensorId.ColorDetection:
