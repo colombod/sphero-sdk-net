@@ -24,10 +24,10 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="System.Device.Gpio" Version="1.5.0" />
-		<PackageReference Include="System.IO.Pipelines" Version="6.0.0" />
+		<PackageReference Include="System.IO.Pipelines" Version="6.0.1" />
 		<PackageReference Include="System.IO.Ports" Version="6.0.0" />
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
-		<PackageReference Include="UnitsNet" Version="4.104.0" />
+		<PackageReference Include="UnitsNet" Version="4.110.0" />
 	</ItemGroup>
 
 	<ItemGroup>
